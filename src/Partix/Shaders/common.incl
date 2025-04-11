@@ -1,0 +1,11 @@
+#ifndef COMMON_INCL
+#define COMMON_INCL
+
+struct Particle
+{
+    bool alive;
+    float lifecycle;
+    vec3 position;
+    vec3 velocity;
+};
+#endif // COMMON_INCL
