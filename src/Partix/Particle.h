@@ -6,9 +6,9 @@ namespace Partix
 
 struct alignas(16) Particle
 {
-    bool alive;
-    float lifecycle;
-    vec3 position;
-    vec3 velocity;
+    bool alive = false;
+    float lifetime = 0;
+    glm::vec3 position = glm::vec3(0);
+    glm::vec3 velocity = glm::vec3(0);
 };
 } // namespace Partix

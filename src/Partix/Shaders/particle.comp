@@ -1,0 +1,72 @@
+#version 450
+// Declare the struct once
+struct Particle {
+    bool alive;
+    float lifetime;
+    vec3 position;
+    vec3 velocity;
+};
+
+// layout(std140, binding = 0) uniform FEmitter
+// {
+//     int emitCountPerFrame;
+//     vec3 position;
+//     vec3 direction;
+//     float lifetime;
+// } Emitter;
+
+// layout(std140, binding = 1) uniform FFrame
+// {
+//     float prevTime;
+//     float currentTime;
+//     float deltaTime;
+// } Frame;
+
+layout(std140, binding = 1) buffer InputParticles {
+    Particle particles[];
+} inputParticles;
+
+layout(std140, binding = 2) buffer OutputParticles {
+    Particle particles[];
+} outputParticles;
+
+layout(binding = 0) uniform atomic_uint emitCount;
+layout(local_size_x = 256) in;
+
+float random(uint seed) {
+    seed = (seed ^ 61u) ^ (seed >> 16u);
+    seed *= 9u;
+    seed = seed ^ (seed >> 4u);
+    seed *= 0x27d4eb2du;
+    seed = seed ^ (seed >> 15u);
+    return float(seed & 0xFFFFFFFu) / float(0x10000000u);
+}
+
+void main()
+{
+    uint id = gl_GlobalInvocationID.x;
+    Particle particle = inputParticles.particles[id];
+    if (particle.alive) {
+        // particle.lifetime -= Frame.deltaTime;
+        particle.lifetime -= 0.01;
+        if (particle.lifetime <= 0.0) {
+            particle.alive = false;
+        } else {
+            particle.position += particle.velocity * 0.01;
+        }
+    }
+    else
+    {
+        // Check if we can emit a new particle
+        // uint count = atomicCounterIncrement(emitCount);
+        // if (count < Emitter.emitCountPerFrame)
+        // {
+        //     particle.alive = true;
+        //     particle.lifetime = Emitter.lifetime; // Random lifetime
+        //     particle.position = vec3(Emitter.position); // Random position
+        //     particle.velocity = vec3(Emitter.direction); // Random velocity
+        // }
+    }
+
+    outputParticles.particles[id] = particle;
+}

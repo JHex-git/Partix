@@ -47,4 +47,9 @@ void ShaderProgram::SetParam(const std::string &param, const glm::mat4 &value) c
     glUniformMatrix4fv(glGetUniformLocation(m_id, param.c_str()), 1, GL_FALSE,  &value[0][0]);
 }
 
+void ShaderProgram::Bind()const
+{
+    glUseProgram(m_id);
+}
+
 } // namespace Partix

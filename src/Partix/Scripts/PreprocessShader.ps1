@@ -22,7 +22,7 @@ foreach ($file in $files) {
     $outputFileName = Split-Path $outputFile -Leaf
     $outputFileNameBase = $outputFileName.Substring(0, $outputFileName.LastIndexOf('.'))
     $outputFileNameExt = $outputFileName.Substring($outputFileName.LastIndexOf('.'))
-    $outputFile = Join-Path $outputPath "$outputFileNameBase.generated$outputFileNameExt"
+    $outputFile = Join-Path $outputPath "$outputFileName"
     if (-not (Test-Path $outputPath)) {
         New-Item -Path $outputPath -ItemType Directory -Force | Out-Null
     }

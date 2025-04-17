@@ -7,22 +7,11 @@
 namespace Partix
 {
 
-class Emitter
+struct alignas(16) Emitter
 {
-public:
-    void AddComponent(std::unique_ptr<Component> component)
-    {
-        m_components.push_back(std::move(component));
-    }
-
-    void BuildData();
-    
-    bool Compile(const std::string shader_path);
-
-    void Bind(unsigned int &bind_point);
-private:
-    std::vector<std::unique_ptr<Component>> m_components;
-    ShaderProgram m_program;
-    DataBuildContext m_context;
+    int emitCountPerFrame;
+    glm::vec3 position;
+    glm::vec3 direction;
+    float lifetime;
 };
 } // namespace Partix

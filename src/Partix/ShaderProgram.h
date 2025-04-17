@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
@@ -17,6 +18,8 @@ public:
 
     void SetParam(const std::string &param, int value) const;
     void SetParam(const std::string &param, const glm::mat4 &value) const;
+
+    void Bind() const;
     
 private:
     unsigned int m_id;

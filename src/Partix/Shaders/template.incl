@@ -12,7 +12,6 @@ struct ParticleSystem
 
 void main()
 {
-	Particle particle;
 	ParticleSystem particle_system;
 
 	// Initialization Particles

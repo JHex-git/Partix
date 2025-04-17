@@ -10,7 +10,7 @@ layout(std140) uniform EmitterSpawn
 EmitterSpawn_Init(EmitterSpawn module, Particle& particle)
 {
     particle.alive = true;
-    particle.lifecycle = 10.0f;
+    particle.lifetime = 10.0f;
     particle.position = module.position;
     particle.velocity = vec3(0.0f, 0.0f, 0.0f);
 }

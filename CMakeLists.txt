@@ -33,20 +33,16 @@ if (PARTIX_BUILD_EXAMPLE)
     target_link_libraries(Renderer PUBLIC glfw glad glm)
     target_include_directories(Renderer PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
-    add_executable(rain src/Example/rain.cpp)
-    target_link_libraries(rain PRIVATE Partix Renderer)
+    add_executable(fountain src/Example/fountain.cpp)
+    target_link_libraries(fountain PRIVATE Partix Renderer)
 
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT rain)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT fountain)
 endif()
 
-set(GLSLC ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/glslc.exe)
-set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Shaders)
 add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND PowerShell -ExecutionPolicy Bypass -File
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Scripts/PreprocessShader.ps1"
-            -shaderPath "${SHADER_DIR}"
-            -outputRootPath "$<TARGET_FILE_DIR:Partix>/Shaders"
-            -cl "${CMAKE_C_COMPILER}"
-    COMMENT "Preprocessing macro and include in shaders"
+    TARGET Partix
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Shaders $<TARGET_FILE_DIR:Partix>/
+    COMMENT "Copying shaders to output directory"
 )
