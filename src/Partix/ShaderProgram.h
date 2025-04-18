@@ -13,6 +13,12 @@ public:
     ShaderProgram();
     ~ShaderProgram();
 
+    ShaderProgram(const ShaderProgram &) = delete;
+    ShaderProgram(ShaderProgram &&other) : m_id(0)
+    {
+        std::swap(m_id, other.m_id);
+    }
+
     bool Load(const std::vector<Shader> &shaders) const;
     inline unsigned int GetID() const { return m_id; }
 

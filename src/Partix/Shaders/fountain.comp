@@ -10,6 +10,15 @@ struct Particle {
     uvec4 seed;
 };
 
+layout(std140, binding = 0) uniform View
+{
+    mat4 view_mat;
+    mat4 projection_mat;
+    float prevTime;
+    float currentTime;
+    float deltaTime;
+} view;
+
 layout(std140, binding = 1) uniform FEmitter
 {
     vec3 position;
@@ -19,13 +28,6 @@ layout(std140, binding = 1) uniform FEmitter
     float emitVelocity;
     float jitterAngleRange;
 } Emitter;
-
-layout(std140, binding = 2) uniform FFrame
-{
-    float prevTime;
-    float currentTime;
-    float deltaTime;
-} Frame;
 
 layout(std140, binding = 1) buffer InputParticles {
     Particle particles[];
@@ -122,7 +124,7 @@ void EmitterSpawn_Init(inout Particle particle)
     }
     else
     {
-        particle.lifetime -= Frame.deltaTime;
+        particle.lifetime -= view.deltaTime;
         if (particle.lifetime <= 0.0)
         {
             particle.alive = false;
@@ -148,14 +150,14 @@ void Fountain_Init(inout Particle particle)
 void RigidBody_Update(inout Particle particle)
 {
     // Update the particle's position based on its velocity and lifetime
-    particle.position += particle.velocity * Frame.deltaTime;
+    particle.position += particle.velocity * view.deltaTime;
 }
 
 void AddForce_Update(inout Particle particle)
 {
     // Example force: gravity
     vec3 gravity_acceleration = vec3(0.0, -9.81, 0.0); // Gravity force
-    particle.velocity += gravity_acceleration * Frame.deltaTime;
+    particle.velocity += gravity_acceleration * view.deltaTime;
 }
 
 void Collision_Update(inout Particle particle)

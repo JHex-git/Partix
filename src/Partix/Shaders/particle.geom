@@ -10,11 +10,14 @@ struct Particle {
     uvec4 seed;
 };
 
-layout(binding = 0) uniform FView
+layout(std140, binding = 0) uniform View
 {
     mat4 view_mat;
     mat4 projection_mat;
-} View;
+    float prevTime;
+    float currentTime;
+    float deltaTime;
+} view;
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];
@@ -34,8 +37,8 @@ void main()
     {
         vec2 center = gl_in[0].gl_Position.xy;
         float spriteSize = particle.size;
-        vec2 right = vec2(1, 0) * spriteSize * 0.5 * View.projection_mat[0][0];
-        vec2 up = vec2(0, 1) * spriteSize * 0.5 * View.projection_mat[1][1];
+        vec2 right = vec2(1, 0) * spriteSize * 0.5 * view.projection_mat[0][0];
+        vec2 up = vec2(0, 1) * spriteSize * 0.5 * view.projection_mat[1][1];
         
         // left bottom
         vec4 pos = vec4(center - right - up, gl_in[0].gl_Position.zw);

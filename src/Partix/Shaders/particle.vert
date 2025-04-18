@@ -10,11 +10,14 @@ struct Particle {
     uvec4 seed;
 };
 
-layout(binding = 0) uniform FView
+layout(std140, binding = 0) uniform View
 {
     mat4 view_mat;
     mat4 projection_mat;
-} View;
+    float prevTime;
+    float currentTime;
+    float deltaTime;
+} view;
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];
@@ -28,7 +31,7 @@ void main()
     Particle particle = particle_buffer.particles[id];
     if (particle.alive) {
         ID = id;
-        gl_Position = View.projection_mat * View.view_mat * vec4(particle.position, 1);
+        gl_Position = view.projection_mat * view.view_mat * vec4(particle.position, 1);
     }
     else
     {

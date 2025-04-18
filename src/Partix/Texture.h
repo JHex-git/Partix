@@ -24,6 +24,16 @@ public:
         }
     }
 
+    Texture(const Texture &) = delete;
+
+    Texture(Texture && other)
+        : m_id(0)
+    {
+        std::swap(m_id, other.m_id);
+    }
+
+    Texture &operator=(Texture &&other) = delete;
+
     bool Load(const std::string &path)
     {
         int width;

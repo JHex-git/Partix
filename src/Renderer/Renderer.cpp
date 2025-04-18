@@ -1,15 +1,9 @@
 #include <glad/glad.h>
-#include <Renderer/Renderer.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <vector>
-#include <Partix/Particle.h>
-#include <Partix/Emitter.h>
-#include <Partix/Shader.h>
-#include <Partix/ShaderProgram.h>
-#include <Partix/Frame.h>
+#include <Renderer/Renderer.h>
 #include <Renderer/Camera.h>
-#include <Partix/Texture.h>
+#include <Partix/PartixEngine.h>
+#include <Partix/View.h>
 
 using namespace Partix;
 namespace PartixRenderer
@@ -46,12 +40,7 @@ Renderer::~Renderer()
     glfwTerminate();
 }
 
-struct FView {
-    glm::mat4 view_mat;
-    glm::mat4 projection_mat;
-};
-
-void Renderer::Render()
+void Renderer::Render(Partix::PartixEngine &partix_engine)
 {
     // 现代OpenGL（核心模式）要求必须绑定一个VAO，即使未显式使用。
     GLuint vao;
@@ -60,125 +49,37 @@ void Renderer::Render()
 
     Camera camera(glm::vec3(0, 0, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1f, 1000);
 
-    GLuint uboFView;
-    glGenBuffers(1, &uboFView);
-    glBindBuffer(GL_UNIFORM_BUFFER, uboFView);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(FView), nullptr, GL_DYNAMIC_DRAW); // 分配内存
-    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboFView); // 绑定到 binding = 0
-    FView view;
+    View view;
     view.view_mat = camera.GetViewMatrix();
     view.projection_mat = camera.GetProjectionMatrix();
-    glBindBuffer(GL_UNIFORM_BUFFER, uboFView);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(FView), &view);
-
-    GLuint ssbo[2];
-    GLuint binding_points[2] = {1, 2};
-    std::vector<Particle> particles(100000);
-    glGenBuffers(2, ssbo);
-    static_assert(sizeof(Particle) == 64);
-    for (int i = 0; i < 2; ++i)
-    {
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo[i]);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, particles.size() * sizeof(Particle), particles.data(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding_points[i], ssbo[i]);
-    }
-
-    GLuint zero = 0;
-    GLuint atomic_buffer;
-    glGenBuffers(1, &atomic_buffer);
-    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomic_buffer);
-    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), &zero, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomic_buffer);
-
-    GLuint emitter_ubo, frame_ubo;
-
-    glGenBuffers(1, &emitter_ubo);
-    glBindBuffer(GL_UNIFORM_BUFFER, emitter_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(Emitter), nullptr, GL_STATIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 1, emitter_ubo);
-
-    glGenBuffers(1, &frame_ubo);
-    glBindBuffer(GL_UNIFORM_BUFFER, frame_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(Frame), nullptr, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, 2, frame_ubo);
-
-    Shader simulate_shader(ShaderType::Compute);
-    simulate_shader.Load("particle.comp");
-    ShaderProgram simulate_program;
-    simulate_program.Load({ simulate_shader });
-
-    Shader display_vert(ShaderType::Vertex);
-    Shader display_geom(ShaderType::Geometry);
-    Shader display_frag(ShaderType::Fragment);
-    display_vert.Load("particle.vert");
-    display_geom.Load("particle.geom");
-    display_frag.Load("particle.frag");
-    ShaderProgram display_program;
-    display_program.Load({display_vert, display_geom, display_frag});
-
-    Partix::Texture noise;
-    noise.Load("noise.png");
-    noise.Bind(0);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    int total_particles = static_cast<int>(particles.size());
-    int local_size_x = 256; // Match the local_size_x in your compute shader
-    int num_work_groups = (total_particles + local_size_x - 1) / local_size_x;
+    view.prevTime = 0.0f;
+    view.currentTime = 0.0f;
+    view.deltaTime = 0.0f;
+    
     glfwSwapInterval(0); // 禁用 VSync
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 设置清屏颜色（黑色）
-
-    Emitter emitter;
-    emitter.emitCountPerFrame = 1;
-    emitter.position = glm::vec3(0, 0, 0);
-    emitter.direction = glm::vec3(0, 1, 0);
-    emitter.lifetime = 10.0f;
-    emitter.emitVelocity = 10.0f;
-    emitter.jitterAngleRange = 10.f;
-    glBindBuffer(GL_UNIFORM_BUFFER, emitter_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Emitter), &emitter);
-
-    Frame frame;
-    frame.prevTime = 0.0f;
-    frame.currentTime = 0.0f;
-    frame.deltaTime = 0.0f;
-
-    unsigned int frameCount = 0;
+    unsigned int frame_count = 0;
     float averageFPS = 0;
     double prevTime = glfwGetTime();
     glEnable(GL_BLEND); // 开启混合
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 设置混合因子
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 设置清屏颜色（黑色）
     while (!glfwWindowShouldClose(m_window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 清除颜色和深度缓冲区
 
-        glBindBuffer(GL_UNIFORM_BUFFER, frame_ubo);
-        frame.prevTime = frame.currentTime;
-        frame.currentTime = static_cast<float>(glfwGetTime());
-        frame.deltaTime = frame.currentTime - frame.prevTime;
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Frame), &frame);
+        view.prevTime = view.currentTime;
+        view.currentTime = static_cast<float>(glfwGetTime());
+        view.deltaTime = view.currentTime - view.prevTime;
 
-        glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-        glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), &zero);
-
-        simulate_program.Bind();
-        glDispatchCompute(num_work_groups, 1, 1);
-
-        display_program.Bind();
-        glDrawArrays(GL_POINTS, 0, static_cast<int>(particles.size()));
-
-        std::swap(binding_points[0], binding_points[1]);
-        for (int i = 0; i < 2; ++i)
-        {
-            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding_points[i], ssbo[i]);
-        }
+        partix_engine.Tick(view);
         glfwSwapBuffers(m_window);
         glfwPollEvents();
 
-        frameCount++;
-        if (frameCount == 1000)
+        frame_count++;
+        if (frame_count == 1000)
         {
             double currentTime = glfwGetTime();
-            float FPS = frameCount / static_cast<float>((currentTime - prevTime));
+            float FPS = frame_count / static_cast<float>((currentTime - prevTime));
             if (averageFPS == 0)
             {
                 averageFPS = FPS;
@@ -187,7 +88,7 @@ void Renderer::Render()
             {
                 averageFPS = (averageFPS + FPS) / 2.0f;
             }
-            frameCount = 0;
+            frame_count = 0;
             prevTime = currentTime;
         }
     }
