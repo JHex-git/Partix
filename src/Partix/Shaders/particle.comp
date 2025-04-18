@@ -15,6 +15,8 @@ layout(std140, binding = 1) uniform FEmitter
     vec3 direction;
     int emitCountPerFrame;
     float lifetime;
+    float emitVelocity;
+    float jitterAngleRange;
 } Emitter;
 
 layout(std140, binding = 2) uniform FFrame
@@ -93,6 +95,15 @@ float  RandomFloat(inout Particle particle)  { return RandomFloat4(particle).x; 
 vec2 RandomFloat2(inout Particle particle) { return RandomFloat4(particle).xy; }
 vec3 RandomFloat3(inout Particle particle) { return RandomFloat4(particle).xyz; }
 
+vec3 rotatePerpendicularAxis(vec3 v, vec3 axis, float angle) {
+    // 确保旋转轴是单位向量且与v垂直
+    vec3 n = normalize(axis);
+    float c = cos(angle);
+    float s = sin(angle);
+    
+    // 计算平面内的旋转分量
+    return v * c + cross(n, v) * s;
+}
 
 void EmitterSpawn_Init(inout Particle particle)
 {
@@ -118,13 +129,18 @@ void EmitterSpawn_Init(inout Particle particle)
     }
 }
 
+#define PI 3.14159265358979323846
 void Fountain_Init(inout Particle particle)
 {
     if (particle.alive && !particle.prevAlive)
     {
-        float theta = RandomFloat(particle) * 2.0 * 3.14159265358979323846; // Random angle
+        float theta = RandomFloat(particle) * 2.0 * PI; // Random angle
         vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
-        particle.velocity = Emitter.direction + velocity_horizontal;
+        vec3 velocity = normalize(Emitter.direction + velocity_horizontal);
+        float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * Emitter.jitterAngleRange / 180.0 * PI;
+        vec3 axis = normalize(cross(Emitter.direction, velocity_horizontal)); // Rotation axis
+        velocity = rotatePerpendicularAxis(velocity, axis, jitter_angle); // Rotate the velocity vector
+        particle.velocity = velocity * Emitter.emitVelocity;
     }
 }
 
@@ -132,6 +148,21 @@ void RigidBody_Update(inout Particle particle)
 {
     // Update the particle's position based on its velocity and lifetime
     particle.position += particle.velocity * Frame.deltaTime;
+}
+
+void AddForce_Update(inout Particle particle)
+{
+    // Example force: gravity
+    vec3 gravity_acceleration = vec3(0.0, -9.81, 0.0); // Gravity force
+    particle.velocity += gravity_acceleration * Frame.deltaTime;
+}
+
+void Collision_Update(inout Particle particle)
+{
+    if (particle.position.y < 0.0)
+    {
+        particle.alive = false;
+    }
 }
 
 void main()
@@ -145,7 +176,8 @@ void main()
     if (particle.alive)
     {
         RigidBody_Update(particle);
-
+        AddForce_Update(particle);
+        Collision_Update(particle);
     }
 
     outputParticles.particles[id] = particle;

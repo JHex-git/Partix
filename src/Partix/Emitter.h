@@ -13,5 +13,7 @@ struct alignas(16) Emitter
     alignas(16) glm::vec3 direction;
     int emitCountPerFrame;
     float lifetime;
+    float emitVelocity;
+    float jitterAngleRange;
 };
 } // namespace Partix

@@ -73,7 +73,7 @@ void Renderer::Render()
 
     GLuint ssbo[2];
     GLuint binding_points[2] = {1, 2};
-    std::vector<Particle> particles(1000);
+    std::vector<Particle> particles(100000);
     glGenBuffers(2, ssbo);
     static_assert(sizeof(Particle) == 64);
     for (int i = 0; i < 2; ++i)
@@ -130,6 +130,8 @@ void Renderer::Render()
     emitter.position = glm::vec3(0, 0, 0);
     emitter.direction = glm::vec3(0, 1, 0);
     emitter.lifetime = 10.0f;
+    emitter.emitVelocity = 10.0f;
+    emitter.jitterAngleRange = 10.f;
     glBindBuffer(GL_UNIFORM_BUFFER, emitter_ubo);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Emitter), &emitter);
 
