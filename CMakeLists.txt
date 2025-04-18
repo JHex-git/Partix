@@ -21,16 +21,18 @@ if (NOT glfw_FOUND)
     add_subdirectory(3rdparty/glfw)
 endif()
 
+include(${CMAKE_SOURCE_DIR}/cmake/stb.cmake)
+
 file(GLOB_RECURSE LIB_SOURCES src/Partix/*.cpp src/Partix/*.h)
 file(GLOB_RECURSE RENDERER_SOURCES src/Renderer/*.cpp src/Renderer/*.h)
 
 add_library(Partix STATIC ${LIB_SOURCES})
-target_link_libraries(Partix PUBLIC glm glad)
+target_link_libraries(Partix PUBLIC glm glad stb)
 target_include_directories(Partix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 if (PARTIX_BUILD_EXAMPLE)
     add_library(Renderer STATIC ${RENDERER_SOURCES})
-    target_link_libraries(Renderer PUBLIC glfw glad glm)
+    target_link_libraries(Renderer PUBLIC glfw glad glm stb)
     target_include_directories(Renderer PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
     add_executable(fountain src/Example/fountain.cpp)

@@ -9,9 +9,9 @@ namespace Partix
 
 struct alignas(16) Emitter
 {
+    alignas(16) glm::vec3 position;
+    alignas(16) glm::vec3 direction;
     int emitCountPerFrame;
-    glm::vec3 position;
-    glm::vec3 direction;
     float lifetime;
 };
 } // namespace Partix

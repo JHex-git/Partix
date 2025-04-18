@@ -42,6 +42,7 @@ bool Shader::Load(const std::string &path) const
         int length;
         glGetShaderInfoLog(m_id, 512, &length, info_log);
         std::cerr << "Failed to compile Shader " << path << std::endl;
+        std::cerr << info_log << std::endl;
         return false;
     }
 

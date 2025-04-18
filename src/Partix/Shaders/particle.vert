@@ -2,9 +2,11 @@
 // Declare the struct once
 struct Particle {
     bool alive;
+    bool prevAlive;
     float lifetime;
     vec3 position;
     vec3 velocity;
+    uvec4 seed;
 };
 
 layout(binding = 0) uniform FView

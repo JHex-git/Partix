@@ -2,25 +2,27 @@
 // Declare the struct once
 struct Particle {
     bool alive;
+    bool prevAlive;
     float lifetime;
     vec3 position;
     vec3 velocity;
+    uvec4 seed;
 };
 
-// layout(std140, binding = 0) uniform FEmitter
-// {
-//     int emitCountPerFrame;
-//     vec3 position;
-//     vec3 direction;
-//     float lifetime;
-// } Emitter;
+layout(std140, binding = 1) uniform FEmitter
+{
+    vec3 position;
+    vec3 direction;
+    int emitCountPerFrame;
+    float lifetime;
+} Emitter;
 
-// layout(std140, binding = 1) uniform FFrame
-// {
-//     float prevTime;
-//     float currentTime;
-//     float deltaTime;
-// } Frame;
+layout(std140, binding = 2) uniform FFrame
+{
+    float prevTime;
+    float currentTime;
+    float deltaTime;
+} Frame;
 
 layout(std140, binding = 1) buffer InputParticles {
     Particle particles[];
@@ -31,41 +33,119 @@ layout(std140, binding = 2) buffer OutputParticles {
 } outputParticles;
 
 layout(binding = 0) uniform atomic_uint emitCount;
+
+
 layout(local_size_x = 256) in;
 
-float random(uint seed) {
-    seed = (seed ^ 61u) ^ (seed >> 16u);
-    seed *= 9u;
-    seed = seed ^ (seed >> 4u);
-    seed *= 0x27d4eb2du;
-    seed = seed ^ (seed >> 15u);
-    return float(seed & 0xFFFFFFFu) / float(0x10000000u);
+/*
+    This random number generator is copied from UE5
+*/
+
+// 4D random number generator inspired by PCGs (permuted congruential generator)
+// Using a **simple** Feistel cipher in place of the usual xor shift permutation step
+// http://jcgt.org/published/0009/03/02/
+// @param v = 4D integer coordinate
+// @return four elements w/ 32 random bits each (0-0xffffffff).
+uvec4 Rand4DPCG32(uvec4 p)
+{
+	// taking a signed int then reinterpreting as unsigned gives good behavior for negatives
+	uvec4 v = uvec4(p);
+
+	// Linear congruential step.
+	v = v * 1664525u + 1013904223u;
+
+	// shuffle
+	v.x += v.y*v.w;
+	v.y += v.z*v.x;
+	v.z += v.x*v.y;
+	v.w += v.y*v.z;
+
+	// xoring high bits into low makes all 32 bits pretty good
+	v ^= (v >> 16u);
+
+	// final shuffle
+	v.x += v.y*v.w;
+	v.y += v.z*v.x;
+	v.z += v.x*v.y;
+	v.w += v.y*v.z;
+
+	return v;
+}
+/*
+    This random number generator is copied from UE5
+*/
+uvec4 RandomUInt4(inout Particle particle)
+{
+	++particle.seed.x;
+	particle.seed.w = particle.seed.x ^ particle.seed.y;
+	return Rand4DPCG32(particle.seed);
+}
+uint   RandomUInt(inout Particle particle) { return RandomUInt4(particle).x; }
+uvec2  RandomUInt2(inout Particle particle) { return RandomUInt4(particle).xy; }
+uvec3  RandomUInt3(inout Particle particle) { return RandomUInt4(particle).xyz; }
+
+vec4 RandomFloat4(inout Particle particle)
+{
+	uvec4 v = RandomUInt4(particle);
+	return vec4((v >> 8) & 0x00ffffff) / 16777216.0; // 0x01000000 == 16777216
+}
+float  RandomFloat(inout Particle particle)  { return RandomFloat4(particle).x; }
+vec2 RandomFloat2(inout Particle particle) { return RandomFloat4(particle).xy; }
+vec3 RandomFloat3(inout Particle particle) { return RandomFloat4(particle).xyz; }
+
+
+void EmitterSpawn_Init(inout Particle particle)
+{
+    particle.prevAlive = particle.alive;
+    if (!particle.alive)
+    {
+        // Check if we can emit a new particle
+        uint count = atomicCounterIncrement(emitCount);
+        if (count < Emitter.emitCountPerFrame)
+        {
+            particle.alive = true;
+            particle.lifetime = Emitter.lifetime; // Random lifetime
+            particle.position = vec3(Emitter.position); // Random position
+        }
+    }
+    else
+    {
+        particle.lifetime -= Frame.deltaTime;
+        if (particle.lifetime <= 0.0)
+        {
+            particle.alive = false;
+        }
+    }
+}
+
+void Fountain_Init(inout Particle particle)
+{
+    if (particle.alive && !particle.prevAlive)
+    {
+        float theta = RandomFloat(particle) * 2.0 * 3.14159265358979323846; // Random angle
+        vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
+        particle.velocity = Emitter.direction + velocity_horizontal;
+    }
+}
+
+void RigidBody_Update(inout Particle particle)
+{
+    // Update the particle's position based on its velocity and lifetime
+    particle.position += particle.velocity * Frame.deltaTime;
 }
 
 void main()
 {
     uint id = gl_GlobalInvocationID.x;
     Particle particle = inputParticles.particles[id];
-    if (particle.alive) {
-        // particle.lifetime -= Frame.deltaTime;
-        particle.lifetime -= 0.01;
-        if (particle.lifetime <= 0.0) {
-            particle.alive = false;
-        } else {
-            particle.position += particle.velocity * 0.01;
-        }
-    }
-    else
+
+    EmitterSpawn_Init(particle);
+    Fountain_Init(particle);
+
+    if (particle.alive)
     {
-        // Check if we can emit a new particle
-        // uint count = atomicCounterIncrement(emitCount);
-        // if (count < Emitter.emitCountPerFrame)
-        // {
-        //     particle.alive = true;
-        //     particle.lifetime = Emitter.lifetime; // Random lifetime
-        //     particle.position = vec3(Emitter.position); // Random position
-        //     particle.velocity = vec3(Emitter.direction); // Random velocity
-        // }
+        RigidBody_Update(particle);
+
     }
 
     outputParticles.particles[id] = particle;
