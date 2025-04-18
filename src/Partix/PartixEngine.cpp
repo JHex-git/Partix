@@ -29,19 +29,16 @@ void PartixEngine::AddEmitter(const Emitter &emitter, int max_particle_count, co
         {
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, context.ssbo[i]);
             glBufferData(GL_SHADER_STORAGE_BUFFER, particles.size() * sizeof(Particle), particles.data(), GL_DYNAMIC_DRAW);
-            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_ssbo_current_binding_points[i], context.ssbo[i]);
         }
     }
 
     glGenBuffers(1, &context.atomic_buffer);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, context.atomic_buffer);
     glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), &m_zero, GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, PARTIX_ATOMIC_BUFFERr_BINDING_POINT, context.atomic_buffer);
 
     glGenBuffers(1, &context.emitter_ubo);
     glBindBuffer(GL_UNIFORM_BUFFER, context.emitter_ubo);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(Emitter), nullptr, GL_STATIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, PARTIX_EMITTER_UBO_BINDING_POINT, context.emitter_ubo);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(Emitter), &emitter, GL_STATIC_DRAW);
 
     Shader simulate_shader(ShaderType::Compute);
     simulate_shader.Load(simulate_shader_path);
@@ -63,9 +60,6 @@ void PartixEngine::AddEmitter(const Emitter &emitter, int max_particle_count, co
         context.textures.push_back(std::move(texture));
         context.texture_bindings.push_back(sprite_texture_bindings[i]);
     }
-    
-    glBindBuffer(GL_UNIFORM_BUFFER, context.emitter_ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Emitter), &emitter);
 
     m_emitter_contexts.push_back(std::move(context));
 }
@@ -73,17 +67,24 @@ void PartixEngine::AddEmitter(const Emitter &emitter, int max_particle_count, co
 void PartixEngine::Tick(const View &view)
 {
     glBindBuffer(GL_UNIFORM_BUFFER, m_ubo_view);
-    glBufferSubData(GL_UNIFORM_BUFFER, PARTIX_VIEW_UBO_BINDING_POINT, sizeof(View), &view);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(View), &view);
     
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     for (const EmitterContext &context : m_emitter_contexts)
     {
         glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, context.atomic_buffer);
-        glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, PARTIX_ATOMIC_BUFFERr_BINDING_POINT, sizeof(GLuint), &m_zero);
+        glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), &m_zero);
     }
     
     for (const EmitterContext &context : m_emitter_contexts)
     {
+        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, PARTIX_ATOMIC_BUFFERr_BINDING_POINT, context.atomic_buffer);
+        glBindBufferBase(GL_UNIFORM_BUFFER, PARTIX_EMITTER_UBO_BINDING_POINT, context.emitter_ubo);
+        for (int i = 0; i < 2; ++i)
+        {
+            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_ssbo_current_binding_points[i], context.ssbo[i]);
+        }
+
         // update particles
         context.simulate_program.Bind();
         int num_work_groups = (context.max_particle_count + m_local_size_x - 1) / m_local_size_x;
@@ -99,12 +100,5 @@ void PartixEngine::Tick(const View &view)
     }
     
     std::swap(m_ssbo_current_binding_points[0], m_ssbo_current_binding_points[1]);
-    for (int i = 0; i < 2; ++i)
-    {
-        for (const EmitterContext &context : m_emitter_contexts)
-        {
-            glBindBufferBase(GL_SHADER_STORAGE_BUFFER, m_ssbo_current_binding_points[i], context.ssbo[i]);
-        }
-    }
 }
 } // namespace Partix

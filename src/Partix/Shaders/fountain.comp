@@ -19,7 +19,7 @@ layout(std140, binding = 0) uniform View
     float deltaTime;
 } view;
 
-layout(std140, binding = 1) uniform FEmitter
+layout(std140, binding = 1) uniform Emitter
 {
     vec3 position;
     vec3 direction;
@@ -27,7 +27,7 @@ layout(std140, binding = 1) uniform FEmitter
     float lifetime;
     float emitVelocity;
     float jitterAngleRange;
-} Emitter;
+} emitter;
 
 layout(std140, binding = 1) buffer InputParticles {
     Particle particles[];
@@ -115,11 +115,11 @@ void EmitterSpawn_Init(inout Particle particle)
     {
         // Check if we can emit a new particle
         uint count = atomicCounterIncrement(emitCount);
-        if (count < Emitter.emitCountPerFrame)
+        if (count < emitter.emitCountPerFrame)
         {
             particle.alive = true;
-            particle.lifetime = Emitter.lifetime; // Random lifetime
-            particle.position = vec3(Emitter.position); // Random position
+            particle.lifetime = emitter.lifetime; // Random lifetime
+            particle.position = vec3(emitter.position); // Random position
         }
     }
     else
@@ -139,11 +139,11 @@ void Fountain_Init(inout Particle particle)
     {
         float theta = RandomFloat(particle) * 2.0 * PI; // Random angle
         vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
-        vec3 velocity = normalize(Emitter.direction + velocity_horizontal);
-        float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * Emitter.jitterAngleRange / 180.0 * PI;
-        vec3 axis = normalize(cross(Emitter.direction, velocity_horizontal)); // Rotation axis
+        vec3 velocity = normalize(emitter.direction + velocity_horizontal);
+        float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * emitter.jitterAngleRange / 180.0 * PI;
+        vec3 axis = normalize(cross(emitter.direction, velocity_horizontal)); // Rotation axis
         velocity = rotatePerpendicularAxis(velocity, axis, jitter_angle); // Rotate the velocity vector
-        particle.velocity = velocity * Emitter.emitVelocity;
+        particle.velocity = velocity * emitter.emitVelocity;
     }
 }
 

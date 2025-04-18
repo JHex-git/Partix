@@ -19,6 +19,9 @@ int main()
     PartixEngine partix_engine;
     partix_engine.AddEmitter(emitter, 10000, "fountain.comp", "circle.frag", {"noise.png"}, {0});
 
+    emitter.position = glm::vec3(2, 0, 0);
+    partix_engine.AddEmitter(emitter, 10000, "fountain.comp", "circle.frag", {"noise.png"}, {0});
+
     renderer.Render(partix_engine);
     return 0;
 }
