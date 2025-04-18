@@ -43,12 +43,11 @@ Renderer::~Renderer()
 
 void Renderer::Render(Partix::PartixEngine &partix_engine)
 {
-    // 现代OpenGL（核心模式）要求必须绑定一个VAO，即使未显式使用。
     GLuint vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    Camera camera(glm::vec3(0, 0, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1f, 1000);
+    Camera camera(glm::vec3(0, 5, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1f, 1000);
 
     View view;
     view.view_mat = camera.GetViewMatrix();
@@ -57,16 +56,16 @@ void Renderer::Render(Partix::PartixEngine &partix_engine)
     view.currentTime = 0.0f;
     view.deltaTime = 0.0f;
     
-    glfwSwapInterval(0); // 禁用 VSync
+    glfwSwapInterval(0);
     unsigned int frame_count = 0;
     float averageFPS = 0;
     double prevTime = glfwGetTime();
-    glEnable(GL_BLEND); // 开启混合
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 设置混合因子
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 设置清屏颜色（黑色）
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     while (!glfwWindowShouldClose(m_window))
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 清除颜色和深度缓冲区
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         view.prevTime = view.currentTime;
         view.currentTime = static_cast<float>(glfwGetTime());

@@ -119,8 +119,10 @@ void EmitterSpawn_Init(inout Particle particle)
         if (count < emitter.emitCountPerFrame)
         {
             particle.alive = true;
-            particle.lifetime = emitter.lifetime; // Random lifetime
-            particle.position = vec3(emitter.position); // Random position
+            // TODO: random
+            particle.lifetime = emitter.lifetime;
+            particle.position = vec3(emitter.position);
+            particle.size = emitter.spriteSize;
         }
     }
     else

@@ -38,6 +38,9 @@ if (PARTIX_BUILD_EXAMPLE)
     add_executable(fountain src/Example/fountain.cpp)
     target_link_libraries(fountain PRIVATE Partix Renderer)
 
+    add_executable(StarRain src/Example/StarRain.cpp)
+    target_link_libraries(StarRain PRIVATE Partix Renderer)
+
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT fountain)
 endif()
 

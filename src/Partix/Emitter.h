@@ -15,5 +15,6 @@ struct alignas(16) Emitter
     float lifetime;
     float emitVelocity;
     float jitterAngleRange;
+    float spriteSize = 0.1f;
 };
 } // namespace Partix

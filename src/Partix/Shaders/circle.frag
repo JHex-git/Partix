@@ -1,6 +1,7 @@
 #version 450
 
 layout(location = 0) in vec2 TexCoord;
+layout(location = 1) flat in uint ID;
 layout(binding = 0) uniform sampler2D utexture;
 out vec4 outColor;
 
@@ -17,6 +18,6 @@ void main()
     }
     else
     {
-        outColor = vec4(1.0, 0.0, 0.0, 0.0); // Transparent color
+        outColor = vec4(0.0, 0.0, 0.0, 0.0); // Transparent color
     }
 }

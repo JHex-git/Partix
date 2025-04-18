@@ -28,6 +28,7 @@ layout(triangle_strip, max_vertices = 4) out;
 
 flat in uint ID[];
 layout(location = 0) out vec2 TexCoord;
+layout(location = 1) out uint IDOut;
 
 void main()
 {
@@ -35,6 +36,8 @@ void main()
 
     if (particle.alive)
     {
+        IDOut = ID[0];
+
         vec2 center = gl_in[0].gl_Position.xy;
         float spriteSize = particle.size;
         vec2 right = vec2(1, 0) * spriteSize * 0.5 * view.projection_mat[0][0];
