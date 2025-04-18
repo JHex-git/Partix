@@ -1,0 +1,8 @@
+#ifndef UTILS_INCL
+#define UTILS_INCL
+
+bool CircleMask(vec2 uv, vec2 center, float radius)
+{
+    return length(uv - center) < radius;
+}
+#endif // UTILS_INCL

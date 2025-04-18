@@ -58,7 +58,7 @@ void Renderer::Render()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    Camera camera(glm::vec3(0, 0, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1, 1000);
+    Camera camera(glm::vec3(0, 0, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1f, 1000);
 
     GLuint uboFView;
     glGenBuffers(1, &uboFView);
@@ -108,18 +108,20 @@ void Renderer::Render()
     simulate_program.Load({ simulate_shader });
 
     Shader display_vert(ShaderType::Vertex);
+    Shader display_geom(ShaderType::Geometry);
     Shader display_frag(ShaderType::Fragment);
     display_vert.Load("particle.vert");
+    display_geom.Load("particle.geom");
     display_frag.Load("particle.frag");
     ShaderProgram display_program;
-    display_program.Load({display_vert, display_frag});
+    display_program.Load({display_vert, display_geom, display_frag});
 
     Partix::Texture noise;
     noise.Load("noise.png");
     noise.Bind(0);
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    int total_particles = particles.size();
+    int total_particles = static_cast<int>(particles.size());
     int local_size_x = 256; // Match the local_size_x in your compute shader
     int num_work_groups = (total_particles + local_size_x - 1) / local_size_x;
     glfwSwapInterval(0); // 禁用 VSync
@@ -140,6 +142,11 @@ void Renderer::Render()
     frame.currentTime = 0.0f;
     frame.deltaTime = 0.0f;
 
+    unsigned int frameCount = 0;
+    float averageFPS = 0;
+    double prevTime = glfwGetTime();
+    glEnable(GL_BLEND); // 开启混合
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // 设置混合因子
     while (!glfwWindowShouldClose(m_window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 清除颜色和深度缓冲区
@@ -157,7 +164,7 @@ void Renderer::Render()
         glDispatchCompute(num_work_groups, 1, 1);
 
         display_program.Bind();
-        glDrawArrays(GL_POINTS, 0, particles.size());
+        glDrawArrays(GL_POINTS, 0, static_cast<int>(particles.size()));
 
         std::swap(binding_points[0], binding_points[1]);
         for (int i = 0; i < 2; ++i)
@@ -166,7 +173,25 @@ void Renderer::Render()
         }
         glfwSwapBuffers(m_window);
         glfwPollEvents();
+
+        frameCount++;
+        if (frameCount == 1000)
+        {
+            double currentTime = glfwGetTime();
+            float FPS = frameCount / static_cast<float>((currentTime - prevTime));
+            if (averageFPS == 0)
+            {
+                averageFPS = FPS;
+            }
+            else
+            {
+                averageFPS = (averageFPS + FPS) / 2.0f;
+            }
+            frameCount = 0;
+            prevTime = currentTime;
+        }
     }
+    std::cout << "FPS: " << averageFPS << std::endl;
 
     glDeleteVertexArrays(1, &vao);
 }

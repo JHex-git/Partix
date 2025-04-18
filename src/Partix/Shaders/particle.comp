@@ -6,6 +6,7 @@ struct Particle {
     float lifetime;
     vec3 position;
     vec3 velocity;
+    float size;
     uvec4 seed;
 };
 

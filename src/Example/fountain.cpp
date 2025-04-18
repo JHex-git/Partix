@@ -6,7 +6,7 @@ int main()
 {
 
 
-    PartixRenderer::Renderer renderer(200, 200);
+    PartixRenderer::Renderer renderer(800, 800);
     renderer.Render();
     return 0;
 }
