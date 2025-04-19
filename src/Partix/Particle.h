@@ -5,7 +5,7 @@
 namespace Partix
 {
 
-struct Particle
+struct alignas(16) Particle
 {
     bool alive = false;
     bool prevAlive = false;

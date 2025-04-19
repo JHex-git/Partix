@@ -121,7 +121,7 @@ void EmitterSpawn_Init(inout Particle particle)
         if (count < emitter.emitCountPerFrame)
         {
             particle.alive = true;
-            particle.lifetime = emitter.lifetime; // Random lifetime
+            particle.lifetime = emitter.lifetime + (RandomFloat(particle) - 0.5) * emitter.lifetime * 0.25; // Random lifetime
             particle.position = vec3(emitter.position); // Random position
             particle.size = emitter.spriteSize;
         }
