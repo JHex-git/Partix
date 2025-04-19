@@ -9,6 +9,7 @@ struct Particle {
     vec3 position;
     vec3 velocity;
     float size;
+    vec3 color;
     uvec4 seed;
 };
 

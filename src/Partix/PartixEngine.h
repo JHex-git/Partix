@@ -15,7 +15,7 @@ class PartixEngine
 public:
     PartixEngine();
 
-    void AddEmitter(const Emitter &emitter, int max_particle_count, const std::string &simulate_shader_path, const std::string &sprite_shader_path, const std::vector<std::string> &sprite_shader_texture_paths, const std::vector<int> &sprite_texture_bindings);
+    void AddEmitter(const Emitter &emitter, const std::string &simulate_shader_path, const std::string &sprite_shader_path, const std::vector<std::string> &sprite_shader_texture_paths, const std::vector<int> &sprite_texture_bindings);
     
     void Tick(const View &view);
     

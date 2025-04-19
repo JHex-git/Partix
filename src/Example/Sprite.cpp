@@ -8,18 +8,18 @@ int main()
 {
     Partix::Emitter emitter;
     emitter.emitCountPerFrame = 1;
-    emitter.position = glm::vec3(-3, 0, -20);
+    emitter.position = glm::vec3(0, 5, -20);
     emitter.direction = glm::vec3(0, 1, 0);
-    emitter.lifetime = 10.0f;
-    emitter.emitVelocity = 10.0f;
-    emitter.jitterAngleRange = 10.f;
-    emitter.spriteSize = 1.0f;
-    emitter.maxParticleCount = 10000;
+    emitter.lifetime = 1000.0f;
+    emitter.emitVelocity = 0.0f;
+    emitter.jitterAngleRange = 0.f;
+    emitter.spriteSize = 35.f;
+    emitter.maxParticleCount = 1;
 
     PartixRenderer::Renderer renderer(800, 800);
 
     PartixEngine partix_engine;
-    partix_engine.AddEmitter(emitter, "star_rain.comp", "star.frag", {}, {});
+    partix_engine.AddEmitter(emitter, "sprite.comp", "star.frag", {}, {});
 
     renderer.Render(partix_engine);
     return 0;

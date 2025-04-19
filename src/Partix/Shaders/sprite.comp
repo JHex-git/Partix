@@ -179,14 +179,10 @@ void main()
         EmitterSpawn_Init(particle);
         if (particle.alive && !particle.prevAlive)
         {
-            Fountain_Init(particle);
         }
 
         if (particle.alive)
         {
-            RigidBody_Update(particle);
-            AddForce_Update(particle);
-            Collision_Update(particle);
         }
 
         outputParticles.particles[id] = particle;

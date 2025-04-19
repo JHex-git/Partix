@@ -17,13 +17,13 @@ PartixEngine::PartixEngine()
     m_ssbo_current_binding_points[1] = PARTIX_SSBO_BINDING_POINT1;
 }
 
-void PartixEngine::AddEmitter(const Emitter &emitter, int max_particle_count, const std::string &simulate_shader_path, const std::string &sprite_shader_path, const std::vector<std::string> &sprite_shader_texture_paths, const std::vector<int> &sprite_texture_bindings)
+void PartixEngine::AddEmitter(const Emitter &emitter, const std::string &simulate_shader_path, const std::string &sprite_shader_path, const std::vector<std::string> &sprite_shader_texture_paths, const std::vector<int> &sprite_texture_bindings)
 {
     EmitterContext context;
-    context.max_particle_count = max_particle_count;
+    context.max_particle_count = emitter.maxParticleCount;
 
     {
-        std::vector<Particle> particles(max_particle_count);
+        std::vector<Particle> particles(emitter.maxParticleCount);
         glGenBuffers(2, context.ssbo);
         for (int i = 0; i < 2; ++i)
         {

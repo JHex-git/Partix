@@ -7,6 +7,7 @@ struct Particle {
     vec3 position;
     vec3 velocity;
     float size;
+    vec3 color;
     uvec4 seed;
 };
 
@@ -28,6 +29,7 @@ layout(std140, binding = 1) uniform Emitter
     float emitVelocity;
     float jitterAngleRange;
     float spriteSize;
+    int maxParticleCount;
 } emitter;
 
 layout(std140, binding = 1) buffer InputParticles {
@@ -135,19 +137,22 @@ void EmitterSpawn_Init(inout Particle particle)
     }
 }
 
+void RandomColor_Init(inout Particle particle)
+{
+    // Random color initialization
+    particle.color = RandomFloat3(particle);
+}
+
 #define PI 3.14159265358979323846
 void Fountain_Init(inout Particle particle)
 {
-    if (particle.alive && !particle.prevAlive)
-    {
-        float theta = RandomFloat(particle) * 2.0 * PI; // Random angle
-        vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
-        vec3 velocity = normalize(emitter.direction + velocity_horizontal);
-        float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * emitter.jitterAngleRange / 180.0 * PI;
-        vec3 axis = normalize(cross(emitter.direction, velocity_horizontal)); // Rotation axis
-        velocity = rotatePerpendicularAxis(velocity, axis, jitter_angle); // Rotate the velocity vector
-        particle.velocity = velocity * emitter.emitVelocity;
-    }
+    float theta = RandomFloat(particle) * 2.0 * PI; // Random angle
+    vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
+    vec3 velocity = normalize(emitter.direction + velocity_horizontal);
+    float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * emitter.jitterAngleRange / 180.0 * PI;
+    vec3 axis = normalize(cross(emitter.direction, velocity_horizontal)); // Rotation axis
+    velocity = rotatePerpendicularAxis(velocity, axis, jitter_angle); // Rotate the velocity vector
+    particle.velocity = velocity * emitter.emitVelocity;
 }
 
 void RigidBody_Update(inout Particle particle)
@@ -174,17 +179,24 @@ void Collision_Update(inout Particle particle)
 void main()
 {
     uint id = gl_GlobalInvocationID.x;
-    Particle particle = inputParticles.particles[id];
-
-    EmitterSpawn_Init(particle);
-    Fountain_Init(particle);
-
-    if (particle.alive)
+    if (id < emitter.maxParticleCount)
     {
-        RigidBody_Update(particle);
-        AddForce_Update(particle);
-        Collision_Update(particle);
-    }
+        Particle particle = inputParticles.particles[id];
 
-    outputParticles.particles[id] = particle;
+        EmitterSpawn_Init(particle);
+        if (particle.alive && !particle.prevAlive)
+        {
+            Fountain_Init(particle);
+            RandomColor_Init(particle);
+        }
+
+        if (particle.alive)
+        {
+            RigidBody_Update(particle);
+            AddForce_Update(particle);
+            Collision_Update(particle);
+        }
+
+        outputParticles.particles[id] = particle;
+    }
 }

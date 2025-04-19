@@ -16,5 +16,6 @@ struct alignas(16) Emitter
     float emitVelocity;
     float jitterAngleRange;
     float spriteSize = 0.1f;
+    int maxParticleCount;
 };
 } // namespace Partix

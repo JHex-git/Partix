@@ -13,6 +13,7 @@ struct Particle
     alignas(16) glm::vec3 position = glm::vec3(0);
     alignas(16) glm::vec3 velocity = glm::vec3(0);
     float size = 0.1f;
+    alignas(16) glm::vec3 color;
     alignas(16) glm::vec<4, unsigned int> seed;
 
     Particle()
