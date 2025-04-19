@@ -8,9 +8,10 @@ namespace Partix
 {
 
 struct DefaultAttributes{};
+struct EmitterBase{};
 
 template <typename ExtraAttrib = DefaultAttributes>
-struct alignas(16) Emitter
+struct alignas(16) Emitter : EmitterBase
 {
     alignas(16) glm::vec3 position;
     alignas(16) glm::vec3 direction;
@@ -25,7 +26,7 @@ struct alignas(16) Emitter
 
 // Empty struct will still take one byte, so specialize for DefaultAttributes to avoid that.
 template <>
-struct alignas(16)  Emitter<DefaultAttributes>
+struct alignas(16)  Emitter<DefaultAttributes> : EmitterBase
 {
     alignas(16) glm::vec3 position;
     alignas(16) glm::vec3 direction;

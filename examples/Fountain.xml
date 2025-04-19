@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Partix>
+    <Emitter Type="Default">
+        <Attributes>
+            <EmitCountPerFrame Value="1" />
+            <Position X="-3" Y="0" Z="-20" />
+            <Direction X="0" Y="1" Z="0" />
+            <Lifetime Value="10.0" />
+            <EmitVelocity Value="10.0" />
+            <JitterAngleRange Value="10.0" />
+            <SpriteSize Value="0.1" />
+            <MaxParticleCount Value="10000" />
+        </Attributes>
+    </Emitter>
+</Partix>

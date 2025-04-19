@@ -18,7 +18,7 @@ Shader::~Shader()
 
 bool Shader::Load(const std::string &path) const
 {
-    std::ifstream shader_input(path);
+    std::ifstream shader_input("Shaders/" + path);
     if (!shader_input.is_open())
     {
         std::cerr << "Shader file " << path << " not found" << std::endl;

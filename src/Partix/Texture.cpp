@@ -10,10 +10,11 @@ bool Texture::Load(const std::string &path)
     int width;
     int height;
     int channels;
-    unsigned char *data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    std::string full_path = "resources/" + path;
+    unsigned char *data = stbi_load(full_path.c_str(), &width, &height, &channels, 0);
     if (data == nullptr)
     {
-        std::cerr << "Failed to load texture: " << path << std::endl;
+        std::cerr << "Failed to load texture: " << full_path << std::endl;
         return false;
     }
 

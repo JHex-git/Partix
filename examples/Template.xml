@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Partix>
+    <Emitter Type="Rain">
+        <Attributes>
+            <EmitCountPerFrame Value="1" />
+            <Position X="0" Y="5" Z="-20" />
+            <Direction X="0" Y="1" Z="0" />
+            <Lifetime Value="1000.0" />
+            <EmitVelocity Value="10.0" />
+            <JitterAngleRange Value="0.0" />
+            <SpriteSize Value="35.0" />
+            <MaxParticleCount Value="1" />
+            <Cover X="40.0" Y="40.0"/> 
+            <RandomTheta Value="30.0" />
+        </Attributes>
+        <SimulateShader Path="rain.comp" />
+        <SpriteShader Path="star.frag" />
+        <Textures>
+            <Texture Path="Textures/Particle.png" Binding="0" />
+            <Texture Path="Textures/Particle.png" Binding="1" />
+        </Textures>
+    </Emitter>
+</Partix>

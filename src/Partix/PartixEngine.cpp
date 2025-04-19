@@ -53,4 +53,45 @@ void PartixEngine::Tick(const View &view)
     
     std::swap(m_ssbo_current_binding_points[0], m_ssbo_current_binding_points[1]);
 }
+
+
+void PartixEngine::CreateEmitterContextInternal(EmitterContext &context, const Emitter<DefaultAttributes> &emitter, const std::string &simulate_shader_path, const std::string &sprite_shader_path, const std::vector<std::string> &sprite_shader_texture_paths, const std::vector<int> &sprite_texture_bindings)
+{
+    context.max_particle_count = emitter.maxParticleCount;
+
+    {
+        std::vector<Particle> particles(emitter.maxParticleCount);
+        glGenBuffers(2, context.ssbo);
+        for (int i = 0; i < 2; ++i)
+        {
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, context.ssbo[i]);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, particles.size() * sizeof(Particle), particles.data(), GL_DYNAMIC_DRAW);
+        }
+    }
+
+    glGenBuffers(1, &context.atomic_buffer);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, context.atomic_buffer);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), &m_zero, GL_DYNAMIC_DRAW);
+
+    Shader simulate_shader(ShaderType::Compute);
+    simulate_shader.Load(simulate_shader_path);
+    context.simulate_program.Load({ simulate_shader });
+
+    Shader display_vert(ShaderType::Vertex);
+    Shader display_geom(ShaderType::Geometry);
+    Shader display_frag(ShaderType::Fragment);
+    display_vert.Load("particle.vert");
+    display_geom.Load("particle.geom");
+    display_frag.Load(sprite_shader_path);
+    context.display_program.Load({display_vert, display_geom, display_frag});
+
+    assert(sprite_shader_texture_paths.size() == sprite_texture_bindings.size());
+    for (int i = 0; i < sprite_shader_texture_paths.size(); ++i)
+    {
+        Partix::Texture texture;
+        texture.Load(sprite_shader_texture_paths[i]);
+        context.textures.push_back(std::move(texture));
+        context.texture_bindings.push_back(sprite_texture_bindings[i]);
+    }
+}
 } // namespace Partix

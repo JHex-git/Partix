@@ -3,13 +3,11 @@
 #include <Renderer/Renderer.cpp>
 #include <Partix/Emitter.h>
 #include <Partix/PartixEngine.h>
-
 struct Rain
 {
     alignas(8) glm::vec2 cover;
     float randomTheta;
 };
-
 int main()
 {
     Partix::Emitter<Rain> emitter;
@@ -21,7 +19,7 @@ int main()
     emitter.jitterAngleRange = 10.f;
     emitter.spriteSize = 1.0f;
     emitter.maxParticleCount = 10000;
-    emitter.attributes.cover = glm::vec2(40.f, 40.f);
+    emitter.attributes.cover = glm::vec2(40, 40);
     emitter.attributes.randomTheta = 30.0f;
 
     PartixRenderer::Renderer renderer(800, 800);
