@@ -1,15 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Partix>
-    <Emitter Type="Default">
+    <Emitter Type="Fountain">
         <Attributes>
             <EmitCountPerFrame Value="1" />
-            <Position X="-3" Y="0" Z="-20" />
+            <Position X="0" Y="0" Z="-20" />
             <Direction X="0" Y="1" Z="0" />
             <Lifetime Value="10.0" />
             <EmitVelocity Value="10.0" />
-            <JitterAngleRange Value="10.0" />
-            <SpriteSize Value="0.1" />
+            <SpriteSize Value="0.15" />
             <MaxParticleCount Value="10000" />
+            <JitterAngleRange Value="10.0" />
+            <Theta Value="40" />
+            <Color X="1" Y="0" Z="0"></Color>
         </Attributes>
+        <SimulateShader Path="fountain.comp" />
+        <SpriteShader Path="water.frag" />
+        <Textures>
+            <Texture Path="noise.png" Binding="0" />
+        </Textures>
+    </Emitter>
+    <Emitter Type="Fountain">
+        <Attributes>
+            <EmitCountPerFrame Value="1" />
+            <Position X="0" Y="0" Z="-20" />
+            <Direction X="0" Y="1" Z="0" />
+            <Lifetime Value="10.0" />
+            <EmitVelocity Value="15.0" />
+            <SpriteSize Value="0.15" />
+            <MaxParticleCount Value="10000" />
+            <JitterAngleRange Value="10.0" />
+            <Theta Value="0" />
+            <Color X="0" Y="1" Z="0"></Color>
+        </Attributes>
+        <SimulateShader Path="fountain.comp" />
+        <SpriteShader Path="water.frag" />
+        <Textures>
+            <Texture Path="noise.png" Binding="0" />
+        </Textures>
+    </Emitter>
+    <Emitter Type="Fountain">
+        <Attributes>
+            <EmitCountPerFrame Value="3" />
+            <Position X="0" Y="0" Z="-20" />
+            <Direction X="0" Y="1" Z="0" />
+            <Lifetime Value="10.0" />
+            <EmitVelocity Value="20.0" />
+            <SpriteSize Value="0.15" />
+            <MaxParticleCount Value="20000" />
+            <JitterAngleRange Value="5.0" />
+            <Theta Value="0" />
+            <Color X="1" Y="1" Z="1"></Color>
+        </Attributes>
+        <SimulateShader Path="fountain.comp" />
+        <SpriteShader Path="water.frag" />
+        <Textures>
+            <Texture Path="noise.png" Binding="0" />
+        </Textures>
     </Emitter>
 </Partix>

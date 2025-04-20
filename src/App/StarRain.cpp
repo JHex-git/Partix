@@ -16,7 +16,6 @@ int main()
     emitter.direction = glm::vec3(0, -1, 0);
     emitter.lifetime = 10.0f;
     emitter.emitVelocity = 10.0f;
-    emitter.jitterAngleRange = 10.f;
     emitter.spriteSize = 1.0f;
     emitter.maxParticleCount = 10000;
     emitter.attributes.cover = glm::vec2(40, 40);

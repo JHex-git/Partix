@@ -27,9 +27,11 @@ layout(std140, binding = 1) uniform Emitter
     int emitCountPerFrame;
     float lifetime;
     float emitVelocity;
-    float jitterAngleRange;
     float spriteSize;
     int maxParticleCount;
+    float jitterAngleRange;
+    float theta;
+    vec3 color;
 } emitter;
 
 layout(std140, binding = 1) buffer InputParticles {
@@ -139,13 +141,15 @@ void EmitterSpawn_Init(inout Particle particle)
 #define PI 3.14159265358979323846
 void Fountain_Init(inout Particle particle)
 {
-    float theta = RandomFloat(particle) * 2.0 * PI; // Random angle
-    vec3 velocity_horizontal = vec3(cos(theta), 0.0, sin(theta)); // Random direction in XZ plane
-    vec3 velocity = normalize(emitter.direction + velocity_horizontal);
-    float jitter_angle = (RandomFloat(particle) * 0.5 - 1) * emitter.jitterAngleRange / 180.0 * PI;
-    vec3 axis = normalize(cross(emitter.direction, velocity_horizontal)); // Rotation axis
-    velocity = rotatePerpendicularAxis(velocity, axis, jitter_angle); // Rotate the velocity vector
-    particle.velocity = velocity * emitter.emitVelocity;
+    vec3 canonical_dir = vec3(1, 0, 0);
+    if (emitter.direction.yz == vec2(0, 0)) canonical_dir = vec3(0, 1, 0);
+    float phi = RandomFloat(particle) * 2.0 * PI;
+    vec3 dir_perpendicular = cross(emitter.direction, canonical_dir);
+    dir_perpendicular = rotatePerpendicularAxis(dir_perpendicular, emitter.direction, phi);
+    vec3 jitter_axis = cross(emitter.direction, dir_perpendicular);
+    float jitter_angle = (RandomFloat(particle) * 2 - 1) * emitter.jitterAngleRange;
+    particle.velocity = rotatePerpendicularAxis(emitter.direction, jitter_axis, (jitter_angle + emitter.theta) / 180.0 * PI) * emitter.emitVelocity;
+    particle.color = emitter.color;
 }
 
 void RigidBody_Update(inout Particle particle)

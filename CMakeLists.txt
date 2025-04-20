@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(PARTIX_BUILD_EXAMPLE "Build example of Partix" ON)
+option(PARTIX_BUILD_DEBUG "Build tests of Partix" OFF)
 
 include(cmake/glad.cmake)
 
@@ -59,8 +60,10 @@ if (PARTIX_BUILD_EXAMPLE)
     add_executable(Fountain src/App/Fountain.cpp)
     target_link_libraries(Fountain PRIVATE Partix Renderer)
 
-    add_executable(Sprite src/App/Sprite.cpp)
-    target_link_libraries(Sprite PRIVATE Partix Renderer)
+    if (PARTIX_BUILD_DEBUG)
+        add_executable(Sprite src/App/Sprite.cpp)
+        target_link_libraries(Sprite PRIVATE Partix Renderer)
+    endif()
 
     # set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT fountain)
 endif()

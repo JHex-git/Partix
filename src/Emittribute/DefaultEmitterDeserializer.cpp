@@ -35,10 +35,6 @@ void DefaultEmitterDeserializer(const tinyxml2::XMLElement *emitter_element, Emi
         {
             element->QueryFloatAttribute("Value", &emitter.emitVelocity);
         }
-        else if (element_type == "JitterAngleRange")
-        {
-            element->QueryFloatAttribute("Value", &emitter.jitterAngleRange);
-        }
         else if (element_type == "SpriteSize")
         {
             element->QueryFloatAttribute("Value", &emitter.spriteSize);

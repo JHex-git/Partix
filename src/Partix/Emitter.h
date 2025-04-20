@@ -18,7 +18,6 @@ struct alignas(16) Emitter : EmitterBase
     int emitCountPerFrame;
     float lifetime;
     float emitVelocity;
-    float jitterAngleRange;
     float spriteSize = 0.1f;
     int maxParticleCount;
     ExtraAttrib attributes;
@@ -33,7 +32,6 @@ struct alignas(16)  Emitter<DefaultAttributes> : EmitterBase
     int emitCountPerFrame;
     float lifetime;
     float emitVelocity;
-    float jitterAngleRange;
     float spriteSize = 0.1f;
     int maxParticleCount;
 };

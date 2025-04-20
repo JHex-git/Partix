@@ -27,7 +27,6 @@ layout(std140, binding = 1) uniform Emitter
     int emitCountPerFrame;
     float lifetime;
     float emitVelocity;
-    float jitterAngleRange;
     float spriteSize;
     int maxParticleCount;
     vec2 cover;

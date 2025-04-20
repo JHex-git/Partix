@@ -12,14 +12,13 @@ int main()
     emitter.direction = glm::vec3(0, 1, 0);
     emitter.lifetime = 1000.0f;
     emitter.emitVelocity = 0.0f;
-    emitter.jitterAngleRange = 0.f;
     emitter.spriteSize = 35.f;
     emitter.maxParticleCount = 1;
 
     PartixRenderer::Renderer renderer(800, 800);
 
     PartixEngine partix_engine;
-    partix_engine.AddEmitter(emitter, "sprite.comp", "star.frag", {}, {});
+    partix_engine.AddEmitter(emitter, "sprite.comp", "water.frag", {"noise.png"}, {0});
 
     renderer.Render(partix_engine);
     return 0;

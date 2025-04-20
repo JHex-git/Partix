@@ -1,7 +1,4 @@
-#include <vector>
-#include <glad/glad.h>
 #include <Partix/Emitter.h>
-#include <Partix/PartixEngine.h>
 #include <Emittribute/EmitterFactory.h>
 #include <Emittribute/DefaultEmitterDeserializer.h>
 

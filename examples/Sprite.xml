@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Partix>
     <Emitter Type="Default">
-        <EmitCountPerFrame Value="1" />
-        <Position X="0" Y="5" Z="-20" />
-        <Direction X="0" Y="1" Z="0" />
-        <Lifetime Value="1000.0" />
-        <EmitVelocity Value="10.0" />
-        <JitterAngleRange Value="0.0" />
-        <SpriteSize Value="35.0" />
-        <MaxParticleCount Value="1" />
+        <Attributes>
+            <EmitCountPerFrame Value="1" />
+            <Position X="0" Y="5" Z="-20" />
+            <Direction X="0" Y="1" Z="0" />
+            <Lifetime Value="1000.0" />
+            <EmitVelocity Value="10.0" />
+            <JitterAngleRange Value="0.0" />
+            <SpriteSize Value="35.0" />
+            <MaxParticleCount Value="1" />
+        </Attributes>
+        <SimulateShader Path="sprite.comp" />
+        <SpriteShader Path="water.frag" />
     </Emitter>
 </Partix>
