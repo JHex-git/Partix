@@ -1,5 +1,5 @@
-#ifndef EMITTERSPAWN_INCL
-#define EMITTERSPAWN_INCL
+#ifndef EMITTERSPAWN_GLSL
+#define EMITTERSPAWN_GLSL
 #include "common.incl"
 
 layout(std140) uniform EmitterSpawn
@@ -19,4 +19,4 @@ EmitterSpawn_Update(EmitterSpawn module, Particle& particle)
 {
     
 }
-#endif // EMITTERSPAWN_INCL
+#endif // EMITTERSPAWN_GLSL

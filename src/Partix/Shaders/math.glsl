@@ -1,5 +1,5 @@
-#ifndef MATH_INCL
-#define MATH_INCL
+#ifndef MATH_GLSL
+#define MATH_GLSL
 
 vec3 rotatePerpendicularAxis(vec3 v, vec3 axis, float angle) {
     // 确保旋转轴是单位向量且与v垂直
@@ -10,4 +10,4 @@ vec3 rotatePerpendicularAxis(vec3 v, vec3 axis, float angle) {
     // 计算平面内的旋转分量
     return v * c + cross(n, v) * s;
 }
-#endif // MATH_INCL
+#endif // MATH_GLSL

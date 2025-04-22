@@ -1,4 +1,4 @@
-#include "shader.incl"
+#include "shader.glsl"
 SHADER_BEGIN
 
 #define PARTIX_MODULES \

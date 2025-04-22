@@ -1,5 +1,5 @@
-#ifndef PARTICLE_COMMON_INCL
-#define PARTICLE_COMMON_INCL
+#ifndef PARTICLE_COMMON_GLSL
+#define PARTICLE_COMMON_GLSL
 #include "random.incl"
 
 struct Particle {
@@ -35,4 +35,4 @@ float  RandomFloat(inout Particle particle)  { return RandomFloat4(particle).x; 
 vec2 RandomFloat2(inout Particle particle) { return RandomFloat4(particle).xy; }
 vec3 RandomFloat3(inout Particle particle) { return RandomFloat4(particle).xyz; }
 
-#endif // PARTICLE_COMMON_INCL
+#endif // PARTICLE_COMMON_GLSL

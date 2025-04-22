@@ -1,4 +1,5 @@
-#version 450
+#include "shader.glsl"
+SHADER_BEGIN
 
 struct Particle {
     bool alive;

@@ -1,5 +1,5 @@
-#ifndef RANDOM_INCL
-#define RANDOM_INCL
+#ifndef RANDOM_GLSL
+#define RANDOM_GLSL
 
 /*
     This random number generator is copied from UE5
@@ -35,4 +35,4 @@ uvec4 Rand4DPCG32(uvec4 p)
 
 	return v;
 }
-#endif // RANDOM_INCL
+#endif // RANDOM_GLSL

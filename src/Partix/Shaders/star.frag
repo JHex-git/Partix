@@ -1,4 +1,5 @@
-#version 450
+#include "shader.glsl"
+SHADER_BEGIN
 
 layout(std140, binding = 0) uniform View
 {

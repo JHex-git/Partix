@@ -1,8 +1,5 @@
-
-
-#ifndef TEMPLATE_INCL
-#define TEMPLATE_INCL
-#include "common.incl"
+#ifndef TEMPLATE_GLSL
+#define TEMPLATE_GLSL
 struct ParticleSystem
 {
 	#define PARTIX_MODULE(NAME) NAME	NAME##_module;
@@ -15,7 +12,7 @@ void main()
 	ParticleSystem particle_system;
 
 	// Initialization Particles
-	#define PARTIX_MODULE(NAME) NAME##_Init(particle_system.##NAME##_module, particle);
+	#define PARTIX_MODULE(NAME) NAME##_Init(particle_system.NAME##_module, particle);
 		PARTIX_MODULES
 	#undef PARTIX_MODULE
 
@@ -25,7 +22,7 @@ void main()
 	}
 
 	// Update Particles
-	#define PARTIX_MODULE(NAME) NAME##_Update(particle_system.##NAME##_module, particle);
+	#define PARTIX_MODULE(NAME) NAME##_Update(particle_system.NAME##_module, particle);
 		PARTIX_MODULES
 	#undef PARTIX_MODULE
 
@@ -34,4 +31,4 @@ void main()
 		return;
 	}
 }
-#endif
+#endif // TEMPLATE_GLSL

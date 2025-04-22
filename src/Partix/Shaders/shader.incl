@@ -1,6 +1,0 @@
-#ifndef SHADER_INCL
-#define SHADER_INCL
-#define SHADER_BEGIN \
-	#version 450
-
-#endif
