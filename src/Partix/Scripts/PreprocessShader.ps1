@@ -4,13 +4,10 @@ param(
     [string]$outputRootPath,
     [string]$cl
 )
-# $shaderPath = "C:/Users/zgjh/Workspace/Partix/src/Partix/Shaders"
-# $outputRootPath = "C:/Users/zgjh/Workspace/Partix/build/Shaders"
-# $glslc = "glslc.exe"
 $basePath = (Get-Item $shaderPath).FullName
 
 # 递归搜索所有.vert和.frag文件
-$files = Get-ChildItem -Path $basePath -Recurse -Include '*.vert', '*.frag', '*.comp' -ErrorAction SilentlyContinue
+$files = Get-ChildItem -Path $basePath -Recurse -Include '*.vert', '*.geom', '*.frag', '*.comp' -ErrorAction SilentlyContinue
 
 # 遍历文件并输出相对路径
 foreach ($file in $files) {
@@ -26,6 +23,6 @@ foreach ($file in $files) {
     if (-not (Test-Path $outputPath)) {
         New-Item -Path $outputPath -ItemType Directory -Force | Out-Null
     }
-    & $cl /I ./ /EP $file > $outputFile /nologo
+    & $cl /I ./ /EP $file /nologo | Out-File -Encoding ASCII -FilePath $outputFile
     Pop-Location
 }
