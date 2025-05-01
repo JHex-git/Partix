@@ -4,4 +4,4 @@ SHADER_BEGIN
 #define PARTIX_MODULES \
 	PARTIX_MODULE(EmitterSpawn)
 
-#include "template.incl"
+#include "template.glsl"

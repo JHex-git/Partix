@@ -16,7 +16,7 @@ Shader::~Shader()
     if (m_id != 0) glDeleteShader(m_id);
 }
 
-bool Shader::Load(const std::string &path) const
+bool Shader::Load(const std::string &path, const std::map<std::string, std::string> &defines) const
 {
     std::ifstream shader_input("Shaders/" + path);
     if (!shader_input.is_open())
@@ -30,6 +30,28 @@ bool Shader::Load(const std::string &path) const
     shader_input.close();
 
     std::string shader_string = ss.str();
+    std::string define_string;
+    for (const auto& [key, value] : defines)
+    {
+        define_string += "#define " + key + " " + value + "\n";
+    }
+
+    // Find #version line and insert defines after it
+    size_t version_pos = shader_string.find("#version");
+    if (version_pos != std::string::npos)
+    {
+        size_t end_of_version = shader_string.find('\n', version_pos);
+        if (end_of_version != std::string::npos)
+        {
+            shader_string.insert(end_of_version + 1, define_string);
+        }
+    }
+    else
+    {
+        std::cerr << "No #version line found in shader " << path << std::endl;
+        return false;
+    }
+    
     const char *shader_source = shader_string.c_str();
     glShaderSource(m_id, 1, &shader_source, nullptr);
     glCompileShader(m_id);

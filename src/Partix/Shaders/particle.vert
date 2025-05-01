@@ -1,16 +1,6 @@
 #include "shader.glsl"
 SHADER_BEGIN
-// Declare the struct once
-struct Particle {
-    bool alive;
-    bool prevAlive;
-    float lifetime;
-    vec3 position;
-    vec3 velocity;
-    float size;
-    vec3 color;
-    uvec4 seed;
-};
+#include "particle_common.glsl"
 
 layout(std140, binding = 0) uniform View
 {

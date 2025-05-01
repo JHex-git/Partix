@@ -21,10 +21,17 @@ int main()
     emitter.attributes.cover = glm::vec2(40, 40);
     emitter.attributes.randomTheta = 30.0f;
 
+    EmitterShaderInfo emitter_shader_info;
+    emitter_shader_info.simulate_shader_path = "rain.comp";
+    emitter_shader_info.sprite_shader_path = "star.frag";
+    emitter_shader_info.sprite_shader_texture_paths = {};
+    emitter_shader_info.sprite_texture_bindings = {};
+    emitter_shader_info.defines[EmitterShaderInfo::ParticleExtraAttributes] = "vec2 cover;float randomTheta;";
+
     PartixRenderer::Renderer renderer(800, 800);
 
     PartixEngine partix_engine;
-    partix_engine.AddEmitter(emitter, "rain.comp", "star.frag", {}, {});
+    partix_engine.AddEmitter(emitter, emitter_shader_info);
 
     renderer.Render(partix_engine);
     return 0;

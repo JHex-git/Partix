@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <map>
 #include <glad/glad.h>
 
 namespace Partix
@@ -19,7 +20,7 @@ public:
     Shader(ShaderType);
     ~Shader();
 
-    bool Load(const std::string &path) const;
+    bool Load(const std::string &path, const std::map<std::string, std::string> &defines) const;
     inline unsigned int GetID() const { return m_id; }
 private:
     ShaderType m_type;

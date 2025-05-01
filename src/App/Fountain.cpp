@@ -25,22 +25,29 @@ int main()
     emitter.attributes.theta = 40.f;
     emitter.attributes.color = glm::vec3(1.0f, 0.f, 0.0f);
 
+    EmitterShaderInfo emitter_shader_info;
+    emitter_shader_info.simulate_shader_path = "fountain.comp";
+    emitter_shader_info.sprite_shader_path = "water.frag";
+    emitter_shader_info.sprite_shader_texture_paths = {"noise.png"};
+    emitter_shader_info.sprite_texture_bindings = {0};
+    emitter_shader_info.defines[EmitterShaderInfo::ParticleExtraAttributes] = "float jitterAngleRange;float theta;vec3 color;";
+
     PartixRenderer::Renderer renderer(800, 800);
 
     PartixEngine partix_engine;
-    partix_engine.AddEmitter(emitter, "fountain.comp", "water.frag", {"noise.png"}, {0});
+    partix_engine.AddEmitter(emitter, emitter_shader_info);
 
     emitter.emitVelocity = 15.0f;
     emitter.attributes.theta = 0.f;
     emitter.attributes.color = glm::vec3(0.0f, 1.f, 0.0f);
-    partix_engine.AddEmitter(emitter, "fountain.comp", "water.frag", {"noise.png"}, {0});
+    partix_engine.AddEmitter(emitter, emitter_shader_info);
 
     emitter.emitCountPerFrame = 3;
     emitter.emitVelocity = 20.0f;
     emitter.maxParticleCount = 20000;
     emitter.attributes.jitterAngleRange = 5.f;
     emitter.attributes.color = glm::vec3(1.0f, 1.f, 1.0f);
-    partix_engine.AddEmitter(emitter, "fountain.comp", "water.frag", {"noise.png"}, {0});
+    partix_engine.AddEmitter(emitter, emitter_shader_info);
     
     renderer.Render(partix_engine);
     return 0;

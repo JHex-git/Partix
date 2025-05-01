@@ -1,5 +1,6 @@
 #include "shader.glsl"
 SHADER_BEGIN
+#include "particle_common.glsl"
 
 layout(std140, binding = 0) uniform View
 {
@@ -9,17 +10,6 @@ layout(std140, binding = 0) uniform View
     float currentTime;
     float deltaTime;
 } view;
-
-struct Particle {
-    bool alive;
-    bool prevAlive;
-    float lifetime;
-    vec3 position;
-    vec3 velocity;
-    float size;
-    vec3 color;
-    uvec4 seed;
-};
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];

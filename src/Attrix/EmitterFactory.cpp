@@ -1,5 +1,5 @@
 #include <Partix/Emitter.h>
-#include <Emittribute/EmitterFactory.h>
+#include <Attrix/EmitterFactory.h>
 
 namespace Partix
 {

@@ -1,6 +1,6 @@
 #ifndef PARTICLE_COMMON_GLSL
 #define PARTICLE_COMMON_GLSL
-#include "random.incl"
+#include "random.glsl"
 
 struct Particle {
     bool alive;
@@ -11,8 +11,8 @@ struct Particle {
     float size;
     vec3 color;
     uvec4 seed;
+    PARTICLE_EXTRA_ATTRIBUTES
 };
-
 /*
     This random number generator is copied from UE5
 */

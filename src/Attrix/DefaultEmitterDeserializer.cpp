@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include <Emittribute/DefaultEmitterDeserializer.h>
-#include <Emittribute/EmitterFactory.h>
+#include <Attrix/DefaultEmitterDeserializer.h>
+#include <Attrix/EmitterFactory.h>
 
 namespace Partix
 {

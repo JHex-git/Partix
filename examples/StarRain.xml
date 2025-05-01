@@ -15,5 +15,8 @@
         </Attributes>
         <SimulateShader Path="rain.comp" />
         <SpriteShader Path="star.frag" />
+        <Particle>
+            <Attributes Type="Test" />
+        </Particle>
     </Emitter>
 </Partix>

@@ -1,6 +1,6 @@
 #include <Partix/Emitter.h>
-#include <Emittribute/EmitterFactory.h>
-#include <Emittribute/DefaultEmitterDeserializer.h>
+#include <Attrix/EmitterFactory.h>
+#include <Attrix/DefaultEmitterDeserializer.h>
 
 namespace Partix
 {

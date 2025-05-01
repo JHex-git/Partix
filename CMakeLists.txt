@@ -41,18 +41,19 @@ if (PARTIX_BUILD_EXAMPLE)
         include(${CMAKE_SOURCE_DIR}/cmake/tinyxml2.cmake)
         add_subdirectory(3rdparty/tinyxml2)
     endif()
-    file(GLOB Emittribute_SOURCES src/Emittribute/*.cpp src/Emittribute/*.h)
-    add_library(Emittribute STATIC ${Emittribute_SOURCES})
-    target_link_libraries(Emittribute PUBLIC Partix tinyxml2)
+    file(GLOB Attrix_SOURCES src/Attrix/*.cpp src/Attrix/*.h)
+    add_library(Attrix STATIC ${Attrix_SOURCES})
+    target_link_libraries(Attrix PUBLIC Partix tinyxml2)
     
     # static library will be ignored by linker as these symbols are not referenced
     # so use OBJECT library to compile them into the executable
-    file(GLOB Emittribute_Attributes_SOURCES src/Emittribute/Attributes/*.cpp)
-    add_library(Emittribute_Attributes OBJECT ${Emittribute_Attributes_SOURCES})
-    target_link_libraries(Emittribute_Attributes PUBLIC Emittribute)
+    file(GLOB Attrix_Emitter_SOURCES src/Attrix/Emitter/*.cpp)
+    file(GLOB Attrix_Particle_SOURCES src/Attrix/Particle/*.cpp)
+    add_library(Attrix_Attributes OBJECT ${Attrix_Emitter_SOURCES} ${Attrix_Particle_SOURCES})
+    target_link_libraries(Attrix_Attributes PUBLIC Attrix)
     
     add_executable(PartixRenderer src/App/PartixRenderer.cpp)
-    target_link_libraries(PartixRenderer PRIVATE Partix Renderer Emittribute Emittribute_Attributes)
+    target_link_libraries(PartixRenderer PRIVATE Partix Renderer Attrix Attrix_Attributes)
 
     add_executable(StarRain src/App/StarRain.cpp)
     target_link_libraries(StarRain PRIVATE Partix Renderer)
@@ -81,7 +82,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
                 -cl "${CMAKE_C_COMPILER}"
         COMMENT "Preprocessing macro and include in shaders"
     )
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU|CLANG")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND sh "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Scripts/PreprocessShader.sh" "${SHADER_DIR}" "$<TARGET_FILE_DIR:Partix>/"

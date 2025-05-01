@@ -4,7 +4,8 @@
 #include <Renderer/Renderer.cpp>
 #include <Partix/Emitter.h>
 #include <Partix/PartixEngine.h>
-#include <Emittribute/EmitterFactory.h>
+#include <Attrix/EmitterFactory.h>
+#include <Attrix/ParticleFactory.h>
 
 int main(int argc, char **argv)
 {
@@ -35,11 +36,9 @@ int main(int argc, char **argv)
         else
         {
             std::string type_name = emitter_element->Attribute("Type");
+            std::string particle_type = "Default";
             EmitterBase* emitter = nullptr;
-            std::string simulate_shader;
-            std::string sprite_shader;
-            std::vector<std::string> textures;
-            std::vector<int> texture_bindings;
+            EmitterShaderInfo emitter_shader_info;
 
             for (const tinyxml2::XMLElement* element = emitter_element->FirstChildElement(); element != nullptr; element = element->NextSiblingElement())
             {
@@ -50,11 +49,11 @@ int main(int argc, char **argv)
                 }
                 else if (element_name == "SimulateShader")
                 {
-                    simulate_shader = element->Attribute("Path");
+                    emitter_shader_info.simulate_shader_path = element->Attribute("Path");
                 }
                 else if (element_name == "SpriteShader")
                 {
-                    sprite_shader = element->Attribute("Path");
+                    emitter_shader_info.sprite_shader_path = element->Attribute("Path");
                 }
                 else if (element_name == "Textures")
                 {
@@ -62,9 +61,14 @@ int main(int argc, char **argv)
                     {
                         std::string texture = texture_element->Attribute("Path");
                         int binding = texture_element->IntAttribute("Binding");
-                        textures.push_back(std::move(texture));
-                        texture_bindings.push_back(binding);
+                        emitter_shader_info.sprite_shader_texture_paths.push_back(std::move(texture));
+                        emitter_shader_info.sprite_texture_bindings.push_back(binding);
                     }
+                }
+                else if (element_name == "Particle")
+                {
+                    const tinyxml2::XMLElement *particle_attribute_element = element->FirstChildElement();
+                    particle_type = particle_attribute_element->Attribute("Type");
                 }
                 else
                 {
@@ -72,7 +76,18 @@ int main(int argc, char **argv)
                 }
             }
 
-            partix_engine.AddEmitter(emitter, Partix::EmitterFactory::Instance().GetEmitterSize(type_name), simulate_shader, sprite_shader, textures, texture_bindings);
+            int particle_size = Partix::ParticleFactory::Instance().GetParticleSize(particle_type);
+            int particle_count = reinterpret_cast<Partix::Emitter<DefaultAttributes> *>(emitter)->maxParticleCount;
+            void *particles_buffer = new char[particle_size * particle_count];
+            Partix::ParticleFactory::Instance().CreateParticlesInBuffer(particle_type, particles_buffer, particle_count);
+            Partix::ParticleFactory::Instance().InitializeParticlesSeedInBuffer(particle_type, particles_buffer, particle_count);
+
+            const std::string &particle_fields = Partix::ParticleFactory::Instance().GetParticleFields(particle_type);
+            emitter_shader_info.defines[EmitterShaderInfo::ParticleExtraAttributes] = particle_fields;
+            partix_engine.AddEmitter(emitter, Partix::EmitterFactory::Instance().GetEmitterSize(type_name), emitter_shader_info, particles_buffer, particle_count, particle_size);
+
+            delete emitter;
+            delete[] static_cast<char *>(particles_buffer);
         }
     }
 

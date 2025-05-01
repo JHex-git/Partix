@@ -15,10 +15,16 @@ int main()
     emitter.spriteSize = 35.f;
     emitter.maxParticleCount = 1;
 
+    EmitterShaderInfo emitter_shader_info;
+    emitter_shader_info.simulate_shader_path = "sprite.comp";
+    emitter_shader_info.sprite_shader_path = "water.frag";
+    emitter_shader_info.sprite_shader_texture_paths = {"noise.png"};
+    emitter_shader_info.sprite_texture_bindings = {0};
+
     PartixRenderer::Renderer renderer(800, 800);
 
     PartixEngine partix_engine;
-    partix_engine.AddEmitter(emitter, "sprite.comp", "water.frag", {"noise.png"}, {0});
+    partix_engine.AddEmitter(emitter, emitter_shader_info);
 
     renderer.Render(partix_engine);
     return 0;
