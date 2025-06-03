@@ -20,6 +20,11 @@ public:
     Shader(ShaderType);
     ~Shader();
 
+    Shader(Shader&&);
+    const Shader& operator=(Shader&&);
+
+    Shader(const Shader&) = delete;
+
     bool Load(const std::string &path, const std::map<std::string, std::string> &defines) const;
     inline unsigned int GetID() const { return m_id; }
 private:

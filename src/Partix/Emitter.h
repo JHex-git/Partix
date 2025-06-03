@@ -6,6 +6,7 @@
 #include <Partix/Component.h>
 #include <Partix/ShaderProgram.h>
 #include <Partix/Attribute.h>
+#include <Partix/Mesh.h>
 
 namespace Partix
 {
@@ -42,6 +43,7 @@ struct EmitterShaderInfo
 {
     std::string simulate_shader_path;
     std::string sprite_shader_path;
+    std::shared_ptr<Mesh> mesh;
     std::vector<std::string> sprite_shader_texture_paths;
     std::vector<int> sprite_texture_bindings;
     std::map<std::string, std::string> defines;

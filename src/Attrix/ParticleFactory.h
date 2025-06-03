@@ -11,8 +11,8 @@ namespace Partix
 
 struct ParticleAttributeMeta
 {
-    int offset;
-    int size;
+    int offset; // Extra Attribute offset
+    int size; // Extra Attribute size
     void *instance;
     std::string fields;
 };
@@ -61,7 +61,7 @@ private:
     {
         ParticleAttributeMeta default_meta;
         default_meta.offset = 0;
-        default_meta.size = sizeof(Particle<DefaultAttributes>);
+        default_meta.size = 0;
         default_meta.instance = new Particle<DefaultAttributes>;
         m_attribute_metas.insert({"Default", default_meta});
     }

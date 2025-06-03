@@ -13,5 +13,8 @@
         </Attributes>
         <SimulateShader Path="sprite.comp" />
         <SpriteShader Path="water.frag" />
+        <Textures>
+            <Texture Path="noise.png" Binding="0" />
+        </Textures>
     </Emitter>
 </Partix>

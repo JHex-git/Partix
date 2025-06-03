@@ -6,8 +6,8 @@ layout(std140, binding = 1) buffer Particles {
     Particle particles[];
 } particle_buffer;
 
-layout(location = 0) in vec2 TexCoord;
-layout(location = 1) flat in uint ID;
+layout(location = 0) flat in uint ID;
+layout(location = 1) in vec2 TexCoord;
 layout(binding = 0) uniform sampler2D utexture;
 out vec4 outColor;
 

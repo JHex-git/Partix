@@ -43,10 +43,6 @@ Renderer::~Renderer()
 
 void Renderer::Render(Partix::PartixEngine &partix_engine)
 {
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
     Camera camera(glm::vec3(0, 5, 10), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), glm::radians(60.0f), 1, 0.1f, 1000);
 
     View view;
@@ -93,7 +89,5 @@ void Renderer::Render(Partix::PartixEngine &partix_engine)
         }
     }
     std::cout << "FPS: " << averageFPS << std::endl;
-
-    glDeleteVertexArrays(1, &vao);
 }
 } // namespace PartixRenderer

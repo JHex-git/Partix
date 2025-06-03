@@ -1,6 +1,5 @@
 #ifndef PARTICLE_COMMON_GLSL
 #define PARTICLE_COMMON_GLSL
-#include "random.glsl"
 
 struct Particle {
     bool alive;
@@ -13,26 +12,4 @@ struct Particle {
     uvec4 seed;
     PARTICLE_EXTRA_ATTRIBUTES
 };
-/*
-    This random number generator is copied from UE5
-*/
-uvec4 RandomUInt4(inout Particle particle)
-{
-	++particle.seed.x;
-	particle.seed.w = particle.seed.x ^ particle.seed.y;
-	return Rand4DPCG32(particle.seed);
-}
-uint   RandomUInt(inout Particle particle) { return RandomUInt4(particle).x; }
-uvec2  RandomUInt2(inout Particle particle) { return RandomUInt4(particle).xy; }
-uvec3  RandomUInt3(inout Particle particle) { return RandomUInt4(particle).xyz; }
-
-vec4 RandomFloat4(inout Particle particle)
-{
-	uvec4 v = RandomUInt4(particle);
-	return vec4((v >> 8) & 0x00ffffff) / 16777216.0; // 0x01000000 == 16777216
-}
-float  RandomFloat(inout Particle particle)  { return RandomFloat4(particle).x; }
-vec2 RandomFloat2(inout Particle particle) { return RandomFloat4(particle).xy; }
-vec3 RandomFloat3(inout Particle particle) { return RandomFloat4(particle).xyz; }
-
 #endif // PARTICLE_COMMON_GLSL

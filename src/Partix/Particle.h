@@ -3,14 +3,7 @@
 #include <random>
 #include <Partix/Attribute.h>
 
-// TODO: Particle Type Erasure
-// No function ptr to constructor
-// 1: Allocate particle memory and initialize seed afterwards
-// How to preserve default value?
-// particle vector initialization
-// randomize seed
-// 2: Register one particle for each ExtraAttrib, copy that to vector and do seed initialization afterwards
-// 3: Copy Particle<DefaultAttributes> to vector, do seed initialization, register each ExtraAttrib, copy that to vector
+// FIXME: bool takes 4 bytes in std140 layout
 namespace Partix
 {
 template <typename ExtraAttrib = DefaultAttributes>

@@ -22,12 +22,23 @@ if (NOT glfw_FOUND)
     add_subdirectory(3rdparty/glfw)
 endif()
 
+find_package(assimp QUIET)
+if (NOT assimp_FOUND)
+    message(STATUS "assimp not found, build from source")
+    include(cmake/assimp.cmake)
+    add_subdirectory(3rdparty/assimp)
+    target_compile_options(assimp PUBLIC /wd4819)
+    # if (MSVC)
+    # endif()
+endif()
+
+
 include(${CMAKE_SOURCE_DIR}/cmake/stb.cmake)
 
 file(GLOB_RECURSE LIB_SOURCES src/Partix/*.cpp src/Partix/*.h)
 
 add_library(Partix STATIC ${LIB_SOURCES})
-target_link_libraries(Partix PUBLIC glm glad stb)
+target_link_libraries(Partix PUBLIC glm glad stb assimp)
 target_include_directories(Partix PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 if (PARTIX_BUILD_EXAMPLE)

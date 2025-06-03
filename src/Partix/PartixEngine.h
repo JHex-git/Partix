@@ -5,6 +5,7 @@
 #include <Partix/ShaderProgram.h>
 #include <Partix/Emitter.h>
 #include <Partix/Particle.h>
+#include <Partix/Mesh.h>
 
 namespace Partix
 {
@@ -46,16 +47,22 @@ public:
     }
     
 private:
+    // TODO: destructors for OpenGL resources
     struct EmitterContext
     {
-        GLuint ssbo[2];
-        GLuint emitter_ubo;
-        GLuint atomic_buffer;
+        GLuint ssbo[2] = {0, 0};
+        GLuint emitter_ubo = 0;
+        GLuint atomic_buffer = 0;
+        GLuint mesh_vbo = 0;
+        GLuint mesh_ebo = 0;
+        GLuint vao = 0;
+        size_t mesh_element_count = 0;
         ShaderProgram simulate_program;
         ShaderProgram display_program;
         std::vector<Texture> textures;
         std::vector<int> texture_bindings;
         int max_particle_count = 0;
+        std::shared_ptr<Mesh> mesh;
     };
 
     void CreateEmitterContextInternal(EmitterContext &context, const Emitter<DefaultAttributes> &emitter, const EmitterShaderInfo &emitter_shader_info);

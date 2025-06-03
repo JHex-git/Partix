@@ -16,6 +16,27 @@ Shader::~Shader()
     if (m_id != 0) glDeleteShader(m_id);
 }
 
+Shader::Shader(Shader&& other)
+{
+    if (this != &other)
+    {
+        m_id = other.m_id;
+        m_type = other.m_type;
+        other.m_id = 0;
+    }
+}
+
+const Shader& Shader::operator=(Shader&& other)
+{
+    if (this != &other)
+    {
+        m_id = other.m_id;
+        m_type = other.m_type;
+        other.m_id = 0;
+    }
+    return *this;
+}
+
 bool Shader::Load(const std::string &path, const std::map<std::string, std::string> &defines) const
 {
     std::ifstream shader_input("Shaders/" + path);

@@ -1,22 +1,14 @@
 #include "shader.glsl"
 SHADER_BEGIN
 #include "particle_common.glsl"
-
-layout(std140, binding = 0) uniform View
-{
-    mat4 view_mat;
-    mat4 projection_mat;
-    float prevTime;
-    float currentTime;
-    float deltaTime;
-} view;
+#include "view.glsl"
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];
 } particle_buffer;
 
-layout(location = 0) in vec2 TexCoord;
-layout(location = 1) flat in uint ID;
+layout(location = 0) flat in uint ID;
+layout(location = 1) in vec2 TexCoord;
 out vec4 outColor;
 
 void main()

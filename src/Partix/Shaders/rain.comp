@@ -1,16 +1,8 @@
 #include "shader.glsl"
 SHADER_BEGIN
-#include "particle_common.glsl"
+#include "random.glsl"
 #include "math.glsl"
-
-layout(std140, binding = 0) uniform View
-{
-    mat4 view_mat;
-    mat4 projection_mat;
-    float prevTime;
-    float currentTime;
-    float deltaTime;
-} view;
+#include "view.glsl"
 
 layout(std140, binding = 1) uniform Emitter
 {

@@ -14,9 +14,24 @@ public:
     ~ShaderProgram();
 
     ShaderProgram(const ShaderProgram &) = delete;
-    ShaderProgram(ShaderProgram &&other) : m_id(0)
+    ShaderProgram(ShaderProgram &&other)
     {
-        std::swap(m_id, other.m_id);
+        if (&other != this)
+        {
+            m_id = other.m_id;
+            other.m_id = 0;
+        }
+    }
+
+    ShaderProgram &operator=(const ShaderProgram &) = delete;
+    ShaderProgram &operator=(ShaderProgram &&other)
+    {
+        if (&other != this)
+        {
+            m_id = other.m_id;
+            other.m_id = 0;
+        }
+        return *this;
     }
 
     bool Load(const std::vector<Shader> &shaders) const;

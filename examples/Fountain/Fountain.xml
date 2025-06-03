@@ -39,7 +39,7 @@
         </Textures>
     </Emitter>
     <Emitter Type="Fountain">
-        <Attributes>
+        <Attributes Type="Default">
             <EmitCountPerFrame Value="3" />
             <Position X="0" Y="0" Z="-20" />
             <Direction X="0" Y="1" Z="0" />

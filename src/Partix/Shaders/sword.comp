@@ -13,9 +13,6 @@ layout(std140, binding = 1) uniform Emitter
     float emitVelocity;
     float spriteSize;
     int maxParticleCount;
-    float jitterAngleRange;
-    float theta;
-    vec3 color;
 } emitter;
 
 layout(std140, binding = 1) buffer InputParticles {
@@ -40,7 +37,7 @@ void EmitterSpawn_Init(inout Particle particle)
         {
             particle.alive = true;
             particle.lifetime = emitter.lifetime + (RandomFloat(particle) - 0.5) * emitter.lifetime * 0.25; // Random lifetime
-            particle.position = vec3(emitter.position); // Random position
+            particle.position = vec3(emitter.position);
             particle.size = emitter.spriteSize;
         }
     }
@@ -54,24 +51,10 @@ void EmitterSpawn_Init(inout Particle particle)
     }
 }
 
-#define PI 3.14159265358979323846
-void Fountain_Init(inout Particle particle)
+void RandomColor_Init(inout Particle particle)
 {
-    vec3 canonical_dir = vec3(1, 0, 0);
-    if (emitter.direction.yz == vec2(0, 0)) canonical_dir = vec3(0, 1, 0);
-    float phi = RandomFloat(particle) * 2.0 * PI;
-    vec3 dir_perpendicular = cross(emitter.direction, canonical_dir);
-    dir_perpendicular = rotatePerpendicularAxis(dir_perpendicular, emitter.direction, phi);
-    vec3 jitter_axis = cross(emitter.direction, dir_perpendicular);
-    float jitter_angle = (RandomFloat(particle) * 2 - 1) * emitter.jitterAngleRange;
-    particle.velocity = rotatePerpendicularAxis(emitter.direction, jitter_axis, (jitter_angle + emitter.theta) / 180.0 * PI) * emitter.emitVelocity;
-    particle.color = emitter.color;
-}
-
-void RigidBody_Update(inout Particle particle)
-{
-    // Update the particle's position based on its velocity and lifetime
-    particle.position += particle.velocity * view.deltaTime;
+    // Random color initialization
+    particle.color = RandomFloat3(particle);
 }
 
 void AddForce_Update(inout Particle particle)
@@ -79,14 +62,6 @@ void AddForce_Update(inout Particle particle)
     // Example force: gravity
     vec3 gravity_acceleration = vec3(0.0, -9.81, 0.0); // Gravity force
     particle.velocity += gravity_acceleration * view.deltaTime;
-}
-
-void Collision_Update(inout Particle particle)
-{
-    if (particle.position.y < 0.0)
-    {
-        particle.alive = false;
-    }
 }
 
 void main()
@@ -99,14 +74,12 @@ void main()
         EmitterSpawn_Init(particle);
         if (particle.alive && !particle.prevAlive)
         {
-            Fountain_Init(particle);
+            RandomColor_Init(particle);
+            particle.position += RandomFloat3(particle) * 100;
         }
 
         if (particle.alive)
         {
-            RigidBody_Update(particle);
-            AddForce_Update(particle);
-            Collision_Update(particle);
         }
 
         outputParticles.particles[id] = particle;

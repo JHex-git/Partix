@@ -1,4 +1,5 @@
 #include <vector>
+#include <filesystem>
 #include <glad/glad.h>
 #include <tinyxml2.h>
 #include <Renderer/Renderer.cpp>
@@ -24,6 +25,8 @@ int main(int argc, char **argv)
         std::cerr << "Failed to load XML file: " << argv[1] << std::endl;
         return -1;
     }
+    std::filesystem::path xml_path(argv[1]);
+    std::filesystem::path xml_directory = xml_path.parent_path();
 
     const tinyxml2::XMLElement* root = doc.RootElement();
     for (const tinyxml2::XMLElement* emitter_element = root->FirstChildElement(); emitter_element != nullptr; emitter_element = emitter_element->NextSiblingElement())
@@ -61,6 +64,7 @@ int main(int argc, char **argv)
                     {
                         std::string texture = texture_element->Attribute("Path");
                         int binding = texture_element->IntAttribute("Binding");
+                        texture = (xml_directory / texture).string();
                         emitter_shader_info.sprite_shader_texture_paths.push_back(std::move(texture));
                         emitter_shader_info.sprite_texture_bindings.push_back(binding);
                     }
@@ -69,6 +73,16 @@ int main(int argc, char **argv)
                 {
                     const tinyxml2::XMLElement *particle_attribute_element = element->FirstChildElement();
                     particle_type = particle_attribute_element->Attribute("Type");
+                }
+                else if (element_name == "Mesh")
+                {
+                    std::string mesh_path = element->Attribute("Path");
+                    emitter_shader_info.mesh = std::make_shared<Mesh>();
+                    mesh_path = (xml_directory / mesh_path).string();
+                    if (!emitter_shader_info.mesh->Load(mesh_path))
+                    {
+                        std::cerr << "Fail to load mesh " << mesh_path << std::endl;
+                    }
                 }
                 else
                 {
