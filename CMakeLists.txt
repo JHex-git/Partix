@@ -80,23 +80,23 @@ if (PARTIX_BUILD_EXAMPLE)
     # set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT fountain)
 endif()
 
-set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Shaders/)
+set(SHADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Shader/)
 # Another Option : Use glslangValidator to do preprocess
-# glslangValidator.exe $file  -P"#extension GL_GOOGLE_include_directive:enable" -I${SHADER_DIR} -E 1>$<TARGET_FILE_DIR:Partix>/Shaders/$file
+# glslangValidator.exe $file  -P"#extension GL_GOOGLE_include_directive:enable" -I${SHADER_DIR} -E 1>$<TARGET_FILE_DIR:Partix>/Shader/$file
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND PowerShell -ExecutionPolicy Bypass -File
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Scripts/PreprocessShader.ps1"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Script/PreprocessShader.ps1"
                 -shaderPath "${SHADER_DIR}"
-                -outputRootPath "$<TARGET_FILE_DIR:Partix>/Shaders"
+                -outputRootPath "$<TARGET_FILE_DIR:Partix>/Shader"
                 -cl "${CMAKE_C_COMPILER}"
         COMMENT "Preprocessing macro and include in shaders"
     )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND sh "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Scripts/PreprocessShader.sh" "${SHADER_DIR}" "$<TARGET_FILE_DIR:Partix>/"
+        COMMAND sh "${CMAKE_CURRENT_SOURCE_DIR}/src/Partix/Script/PreprocessShader.sh" "${SHADER_DIR}" "$<TARGET_FILE_DIR:Partix>/"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         COMMENT "Preprocessing macro and include in shaders"
         VERBATIM
@@ -107,6 +107,6 @@ add_custom_command(
     TARGET Partix
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Partix>/resources
-    COMMENT "Copying resources to output directory"
+    ${CMAKE_CURRENT_SOURCE_DIR}/resource $<TARGET_FILE_DIR:Partix>/resource
+    COMMENT "Copying resource to output directory"
 )

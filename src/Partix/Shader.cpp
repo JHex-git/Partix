@@ -39,7 +39,7 @@ const Shader& Shader::operator=(Shader&& other)
 
 bool Shader::Load(const std::string &path, const std::map<std::string, std::string> &defines) const
 {
-    std::ifstream shader_input("Shaders/" + path);
+    std::ifstream shader_input("Shader/" + path);
     if (!shader_input.is_open())
     {
         std::cerr << "Shader file " << path << " not found" << std::endl;
