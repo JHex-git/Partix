@@ -1,7 +1,7 @@
 #include "shader.glsl"
 SHADER_BEGIN
 #include "random.glsl"
-#include "math.glsl"
+#include "Math/rotation.glsl"
 #include "view.glsl"
 
 layout(std140, binding = 1) uniform Emitter
@@ -26,30 +26,8 @@ layout(std140, binding = 2) buffer OutputParticles {
 layout(binding = 0) uniform atomic_uint emitCount;
 layout(local_size_x = 256) in;
 
-void EmitterSpawn_Init(inout Particle particle)
-{
-    particle.prevAlive = particle.alive;
-    if (!particle.alive)
-    {
-        // Check if we can emit a new particle
-        uint count = atomicCounterIncrement(emitCount);
-        if (count < emitter.emitCountPerFrame)
-        {
-            particle.alive = true;
-            particle.lifetime = emitter.lifetime + (RandomFloat(particle) - 0.5) * emitter.lifetime * 0.25; // Random lifetime
-            particle.position = vec3(emitter.position);
-            particle.size = emitter.spriteSize;
-        }
-    }
-    else
-    {
-        particle.lifetime -= view.deltaTime;
-        if (particle.lifetime <= 0.0)
-        {
-            particle.alive = false;
-        }
-    }
-}
+/* Modules should be included here */
+#include "Module/EmitterSpawn.glsl"
 
 void RandomColor_Init(inout Particle particle)
 {

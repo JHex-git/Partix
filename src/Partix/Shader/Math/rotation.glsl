@@ -1,13 +1,12 @@
-#ifndef MATH_GLSL
-#define MATH_GLSL
+#ifndef ROTATION_GLSL
+#define ROTATION_GLSL
 
 vec3 rotatePerpendicularAxis(vec3 v, vec3 axis, float angle) {
-    // 确保旋转轴是单位向量且与v垂直
+    // ensure rotation axis is perpendicular to v and is unit vector
     vec3 n = normalize(axis);
     float c = cos(angle);
     float s = sin(angle);
     
-    // 计算平面内的旋转分量
     return v * c + cross(n, v) * s;
 }
-#endif // MATH_GLSL
+#endif // ROTATION_GLSL
