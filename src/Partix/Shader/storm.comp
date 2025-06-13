@@ -1,7 +1,6 @@
 #include "shader.glsl"
 SHADER_BEGIN
 #include "random.glsl"
-#include "Math/rotation.glsl"
 #include "view.glsl"
 
 layout(std140, binding = 1) uniform Emitter
@@ -28,6 +27,7 @@ layout(local_size_x = 256) in;
 
 /* Modules should be included here */
 #include "Module/EmitterSpawn.glsl"
+#include "Module/RandomRotation.glsl"
 
 void RandomColor_Init(inout Particle particle)
 {
@@ -53,7 +53,9 @@ void main()
         if (particle.alive && !particle.prevAlive)
         {
             RandomColor_Init(particle);
+            RandomRotation_Init(particle);
             particle.position += RandomFloat3(particle) * 100;
+            particle.offset = RandomFloat(particle) - 0.5;
         }
 
         if (particle.alive)

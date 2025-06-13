@@ -5,7 +5,9 @@ struct Particle {
     bool alive;
     bool prevAlive;
     float lifetime;
+    float spawnTime;
     vec3 position;
+    vec4 rotation;
     vec3 velocity;
     float size;
     vec3 color;

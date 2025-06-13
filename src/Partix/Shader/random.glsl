@@ -1,8 +1,7 @@
 #ifndef RANDOM_GLSL
 #define RANDOM_GLSL
 #include "particle_common.glsl"
-
-#define PI 3.14159265358979323846
+#include "constants.glsl"
 /*
     This random number generator is copied from UE5
 */
@@ -38,9 +37,6 @@ uvec4 Rand4DPCG32(uvec4 p)
 	return v;
 }
 
-/*
-    This random number generator is copied from UE5
-*/
 uvec4 RandomUInt4(inout Particle particle)
 {
 	++particle.seed.x;
@@ -59,6 +55,15 @@ vec4 RandomFloat4(inout Particle particle)
 float  RandomFloat(inout Particle particle)  { return RandomFloat4(particle).x; }
 vec2 RandomFloat2(inout Particle particle) { return RandomFloat4(particle).xy; }
 vec3 RandomFloat3(inout Particle particle) { return RandomFloat4(particle).xyz; }
+
+// Box-Muller transform to convert uniform distribution to normal distribution
+vec4 RandomFloat4NormalDistribution(inout Particle particle)
+{
+	vec4 u = RandomFloat4(particle); // U1 U2 U1' U2'
+	vec2 r = sqrt(-2.0 * log(u.xz));
+	vec2 theta = 2.0 * PI * u.yw;
+	return r.xyxy * vec4(cos(theta.xy), sin(theta.xy)); // Z0 Z0' Z1 Z1'
+}
 
 vec3 RandomPointFromSphere(inout Particle particle)
 {

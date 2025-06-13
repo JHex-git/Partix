@@ -12,7 +12,9 @@ struct alignas(16) Particle
     bool alive = false;
     bool prevAlive = false;
     float lifetime = 0;
+    float spawnTime = 0;
     alignas(16) glm::vec3 position = glm::vec3(0);
+    alignas(16) glm::vec4 rotation = glm::vec4(0, 0, 0, 1);
     alignas(16) glm::vec3 velocity = glm::vec3(0);
     float size = 0.1f;
     alignas(16) glm::vec3 color;
@@ -39,7 +41,9 @@ struct alignas(16) Particle<DefaultAttributes>
     bool alive = false;
     bool prevAlive = false;
     float lifetime = 0;
+    float spawnTime = 0;
     alignas(16) glm::vec3 position = glm::vec3(0);
+    alignas(16) glm::vec4 rotation = glm::vec4(0, 0, 0, 1);
     alignas(16) glm::vec3 velocity = glm::vec3(0);
     float size = 0.1f;
     alignas(16) glm::vec3 color;

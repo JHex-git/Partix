@@ -53,8 +53,6 @@ void PartixEngine::Tick(const View &view)
         if (context.mesh != nullptr)
         {
             glBindVertexArray(context.vao);
-            // glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(context.mesh_element_count), GL_UNSIGNED_INT, nullptr);
-            // FIXME: FPS 0
             glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(context.mesh_element_count), GL_UNSIGNED_INT, nullptr, context.max_particle_count);
         }
         else

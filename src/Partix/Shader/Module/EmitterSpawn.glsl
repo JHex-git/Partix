@@ -13,6 +13,7 @@ void EmitterSpawn_Init(inout Particle particle)
         {
             particle.alive = true;
             particle.lifetime = emitter.lifetime + (RandomFloat(particle) - 0.5) * emitter.lifetime * 0.25; // Random lifetime
+            particle.spawnTime = view.currentTime;
             particle.position = vec3(emitter.position); // Random position
             particle.size = emitter.spriteSize;
         }

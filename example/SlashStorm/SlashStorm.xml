@@ -3,19 +3,19 @@
     <Emitter Type="Default">
         <Attributes>
             <EmitCountPerFrame Value="1" />
-            <Position X="0" Y="20" Z="-500" />
+            <Position X="-50" Y="20" Z="-900" />
             <Direction X="0" Y="-1" Z="0" />
-            <Lifetime Value="10.0" />
+            <Lifetime Value="1.5" />
             <EmitVelocity Value="10.0" />
             <JitterAngleRange Value="10.0" />
             <SpriteSize Value="1.0" />
-            <MaxParticleCount Value="10" />
+            <MaxParticleCount Value="100" />
         </Attributes>
-        <SimulateShader Path="sword.comp" />
+        <SimulateShader Path="storm.comp" />
         <SpriteShader Path="slash.frag"/>
         <Mesh Path="SM_Slash_1.FBX"/>
         <Particle>
-            <Attributes Type="Test" />
+            <Attributes Type="Slash" />
         </Particle>
         <Textures>
             <Texture Path="Rainbow.png" Binding="0" />

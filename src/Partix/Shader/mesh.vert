@@ -2,6 +2,7 @@
 SHADER_BEGIN
 #include "view.glsl"
 #include "particle_common.glsl"
+#include "Math/quaternion.glsl"
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];
@@ -18,7 +19,7 @@ void main()
     uint id = gl_InstanceID;
     Particle particle = particle_buffer.particles[id];
     if (particle.alive) {
-        gl_Position = view.projection_mat * view.view_mat * vec4(particle.position + position, 1);
+        gl_Position = view.projection_mat * view.view_mat * vec4(particle.position + Quaternion_Rotate(particle.rotation, position), 1);
         outTexCoords = tex_coords;
         outId = id;
     }

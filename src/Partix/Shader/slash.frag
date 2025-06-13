@@ -2,6 +2,7 @@
 SHADER_BEGIN
 #include "particle_common.glsl"
 #include "view.glsl"
+#include "constants.glsl"
 
 layout(std140, binding = 1) buffer Particles {
     Particle particles[];
@@ -14,6 +15,8 @@ out vec4 outColor;
 
 void main()
 {
-    float color = pow(1 - abs(TexCoord.x - 0.5) * 2, 5) * pow(1 - abs(TexCoord.y + mix(-1, 1, (sin(view.currentTime) + 1) * 0.5) - 0.5) * 2, 5);
-    outColor = vec4(color.xxx * texture(uTexture, TexCoord).rgb, color.x);
+    Particle particle = particle_buffer.particles[ID];
+    float time = view.currentTime - particle.spawnTime - PI * 0.2;
+    float color = pow(1 - abs(TexCoord.x - 0.5) * 2, 5) * pow(1 - abs(TexCoord.y + mix(-1, 1, (sin(time) + 1) * 0.5) - 0.5) * 2, 5);
+    outColor = vec4(color.xxx * texture(uTexture, TexCoord + vec2(particle.offset, 0)).rgb, color.x);
 }

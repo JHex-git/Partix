@@ -6,19 +6,11 @@ namespace Partix
 void ParticleFactory::CreateParticlesInBuffer(const std::string &type_name, void *buffer, int count)
 {
     const ParticleAttributeMeta &default_meta = m_attribute_metas["Default"];
-    if (type_name == "Default")
-    {
-        for (int i = 0; i < count; ++i)
-        {
-            memcpy((char *)buffer + sizeof(Particle<DefaultAttributes>) * i, default_meta.instance, default_meta.size);
-        }
-        return;
-    }
 
     const ParticleAttributeMeta &meta = m_attribute_metas[type_name];
     for (int i = 0; i < count; ++i)
     {
-        memcpy((char *)buffer + (sizeof(Particle<DefaultAttributes>) + meta.offset + meta.size) * i, default_meta.instance, default_meta.size);
+        memcpy((char *)buffer + (sizeof(Particle<DefaultAttributes>) + meta.offset + meta.size) * i, default_meta.instance, sizeof(Particle<DefaultAttributes>));
         memcpy((char *)buffer + (sizeof(Particle<DefaultAttributes>) + meta.offset + meta.size) * i + meta.offset, meta.instance, meta.size);
     }
 }
