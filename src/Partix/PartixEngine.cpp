@@ -97,7 +97,7 @@ void PartixEngine::CreateEmitterContextInternal(EmitterContext &context, const E
         simulate_shader.Load(emitter_shader_info.simulate_shader_path, emitter_shader_info.defines);
         std::vector<Shader> simulate_shaders;
         simulate_shaders.push_back(std::move(simulate_shader));
-        context.simulate_program.Load({ simulate_shaders });
+        context.simulate_program.Load(simulate_shaders);
     }
 
     if (emitter_shader_info.mesh == nullptr || !emitter_shader_info.mesh->HasLoaded())

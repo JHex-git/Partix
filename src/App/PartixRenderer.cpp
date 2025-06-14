@@ -18,6 +18,7 @@ int main(int argc, char **argv)
 
     PartixRenderer::Renderer renderer(800, 800);
     PartixEngine partix_engine;
+    renderer.Init();
 
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(argv[1]) != tinyxml2::XML_SUCCESS)

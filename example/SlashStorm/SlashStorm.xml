@@ -5,7 +5,7 @@
             <EmitCountPerFrame Value="1" />
             <Position X="-50" Y="20" Z="-900" />
             <Direction X="0" Y="-1" Z="0" />
-            <Lifetime Value="1.5" />
+            <Lifetime Value="0.3" />
             <EmitVelocity Value="10.0" />
             <JitterAngleRange Value="10.0" />
             <SpriteSize Value="1.0" />

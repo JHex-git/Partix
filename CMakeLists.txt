@@ -110,3 +110,11 @@ add_custom_command(
     ${CMAKE_CURRENT_SOURCE_DIR}/resource $<TARGET_FILE_DIR:Partix>/resource
     COMMENT "Copying resource to output directory"
 )
+
+add_custom_command(
+    TARGET Partix
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Renderer/Shader $<TARGET_FILE_DIR:Partix>/Shader
+    COMMENT "Copying resource to output directory"
+)

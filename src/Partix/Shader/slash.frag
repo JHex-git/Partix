@@ -16,7 +16,7 @@ out vec4 outColor;
 void main()
 {
     Particle particle = particle_buffer.particles[ID];
-    float time = view.currentTime - particle.spawnTime - PI * 0.2;
-    float color = pow(1 - abs(TexCoord.x - 0.5) * 2, 5) * pow(1 - abs(TexCoord.y + mix(-1, 1, (sin(time) + 1) * 0.5) - 0.5) * 2, 5);
-    outColor = vec4(color.xxx * texture(uTexture, TexCoord + vec2(particle.offset, 0)).rgb, color.x);
+    float time = (view.currentTime - particle.spawnTime - 0.1 * PI);
+    float color = pow(1 - abs(TexCoord.x - 0.5) * 2, 5) * pow(1 - abs(TexCoord.y - 0.5 + mix(-1, 1, (sin(time) + 1) * 0.5)) * 2, 5);
+    outColor = vec4(color.xxx * texture(uTexture, TexCoord + vec2(particle.offset, 0)).rgb * 10, clamp(color.x, 0, 1));
 }
